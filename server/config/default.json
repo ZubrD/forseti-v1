@@ -1,0 +1,17 @@
+{
+  "port": 3001,
+  "connectDb": {
+    "user": "forseti_admin",
+    "host": "localhost",
+    "database": "forseti_db",
+    "password": "12345"
+  },
+  "connectViaPgQueries": {
+    "username": "forseti_admin",
+    "host": "localhost",
+    "database": "forseti_db",
+    "password": "12345"
+  },
+  "accessSecretString": "my secret phrase to access to web",
+  "refreshSecretString": "my secret phrase to refresh token"
+}

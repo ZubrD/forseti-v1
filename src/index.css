@@ -1,0 +1,7 @@
+.hightlight-search-result {
+    background-color: aquamarine;
+}
+
+.row > * {
+    border: 1px solid #b3b1b1;
+}
