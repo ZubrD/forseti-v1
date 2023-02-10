@@ -16,7 +16,6 @@ router.get("/", (request, response) => {
         response.status(200).json(results.rows);
       }
     );
-    pool.end()  
 });
 
 module.exports = router;

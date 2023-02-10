@@ -40,6 +40,7 @@ const Main = () => {
     dispatch(loadRegion());
   }, []);
 
+
   const filteredRules =
     searchRule.length > 4 // Минимальное количество символов в запросе
       ? rule.filter(
@@ -47,6 +48,7 @@ const Main = () => {
             rule.title.toLowerCase().indexOf(searchRule.toLowerCase()) !== -1
         )
       : [];
+      
   return (
     <>
       <div className="d-flex flex-row">

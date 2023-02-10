@@ -29,7 +29,7 @@ const { ruleRequested, ruleReceived, ruleRequestFailed } = actions;
 export const loadRuleList = () => (dispatch) => {
   dispatch(ruleRequested());
   try {
-    fetch("http://localhost:3001/rules")
+    fetch("http://localhost:3001/api/rule")
       .then((response) => {
         return response.text();
       })

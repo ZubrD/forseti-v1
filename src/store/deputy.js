@@ -29,7 +29,7 @@ export const loadDeputyList = () => (dispatch) => {
 
   dispatch(deputyRequested());
   try {
-    fetch("http://localhost:3001/deputies")
+    fetch("http://localhost:3001/api/deputy")
       .then((response) => {
         return response.text();
       })
