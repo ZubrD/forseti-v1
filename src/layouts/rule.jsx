@@ -4,6 +4,7 @@ import { getRule } from "../store/rule";
 import { getDeputy } from "../store/deputy";
 import { MDBAccordion, MDBAccordionItem } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
+import { nanoid } from "nanoid";
 
 const Rule = ({ match }) => {
   const rules = useSelector(getRule());
@@ -67,24 +68,24 @@ const Rule = ({ match }) => {
                   );
                   if (nameForLink) {
                     return (
-                      <Link to={`deputy/${nameForLink.name}`}>{item} </Link>
+                      <Link to={`deputy/${nameForLink.name}`} key={nanoid()}>{item} </Link>
                     );
                   }
-                } else return <span>{item} </span>; // если нет совпадения, то выводится без гиперссылки
+                } else return <span key={nanoid()}>{item} </span>; // если нет совпадения, то выводится без гиперссылки
               })}
             </div>
           </div>
           {/* //////////////////////////////   ЗАКАЗЧИК ЗАКОНА   ////////////////////////////////////// */}
-          <div class="row">
-            <div class="col">
+          <div className="row">
+            <div className="col">
               <h4>Заказчик:</h4>
               <p>{findedRule.consumer}</p>
             </div>
           </div>
           {/* //////////////////////////////   РАССМОТРЕНИЕ ЗАКОНА   ////////////////////////////////////// */}
           {!findedRule.populated && !findedRule.rejection && (  // Не проголосовали и не отклонили
-            <div class="row">
-              <div class="col">
+            <div className="row">
+              <div className="col">
                 <p>
                   Законопроект на рассмотрении с{" "}
                   {findedRule.initialization_date}
