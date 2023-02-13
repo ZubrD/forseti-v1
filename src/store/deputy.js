@@ -1,4 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
+import httpService from "../services/http.service";
+
+const deputyEndpoint = "deputy/";
 
 const deputySlice = createSlice({
   name: "deputy",
@@ -25,22 +28,23 @@ const deputySlice = createSlice({
 const { reducer: deputyReducer, actions } = deputySlice;
 const { deputyRequested, deputyReceived, deputyRequestFailed } = actions;
 
-export const loadDeputyList = () => (dispatch) => {
-
+export const loadDeputyList = () => async (dispatch) => {
   dispatch(deputyRequested());
   try {
-    fetch("http://localhost:3001/api/deputy")
-      .then((response) => {
-        return response.text();
-      })
-      .then((data) => {
-        const newData = JSON.parse(data);
-        dispatch(deputyReceived(newData));
-      });
+    const deputyData = await deputyService.get();   // Получение с сервера данных по депутатам
+    dispatch(deputyReceived(deputyData));
   } catch (error) {
     dispatch(deputyRequestFailed(error));
   }
 };
+
+const deputyService = {
+  get: async () => {
+    const { data } = await httpService.get(deputyEndpoint);
+    return data;
+  },
+};
+
 
 export const getDeputy = () => (state) => state.deputy.entities;
 
