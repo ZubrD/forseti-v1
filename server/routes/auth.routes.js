@@ -117,7 +117,7 @@ router.post("/signInWithPassword", [
       await pgQuery.query(updateRefreshQueryText, updateRefreshQueryValue);
 
       response.status(201).send({
-        Пользователь: existingUser[0].username,
+        userName: existingUser[0].username,
         userId: existingUser[0].my_id,
         ...tokens,
       });

@@ -8,6 +8,7 @@ import SelectRegion from "../components/selectRegion";
 import SelectDeputy from "../components/selectDeputy";
 import SearchRule from "../components/searchRule";
 import { Link } from "react-router-dom";
+import NavBar from "../components/navBar";
 
 const Main = () => {
   const dispatch = useDispatch();
@@ -40,7 +41,6 @@ const Main = () => {
     dispatch(loadRegion());
   }, []);
 
-
   const filteredRules =
     searchRule.length > 4 // Минимальное количество символов в запросе
       ? rule.filter(
@@ -48,9 +48,15 @@ const Main = () => {
             rule.title.toLowerCase().indexOf(searchRule.toLowerCase()) !== -1
         )
       : [];
-      
+
   return (
     <>
+      <NavBar />
+
+      {/* ///////////////////////////////////////////////////////////////////////////////////// */}
+      {/* ///////////////////////////////////////////////////////////////////////////////////// */}
+      {/* ///////////////////////////////////////////////////////////////////////////////////// */}
+
       <div className="d-flex flex-row">
         {region && <SelectRegion onChange={handleSelectRegion} />}
         {region && (
