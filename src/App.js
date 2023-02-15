@@ -5,6 +5,7 @@ import Main from "./layouts/main";
 import Rule from "./layouts/rule";
 import Login from "./layouts/login";
 import LogOut from "./layouts/logout";
+import Register from "./layouts/register";
 
 function App() {
   return (
@@ -13,6 +14,7 @@ function App() {
       <Route path="/rules" component={Rule} />
       <Route path="/login" component={Login} />
       <Route path="/logout" component={LogOut} />
+      <Route path="/register" component={Register} />
       <Route path="/" exact component={Main} />
     </Switch>
   );

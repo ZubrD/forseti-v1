@@ -9,9 +9,9 @@ const NavBar = () => {
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
+        <Link className="navbar-brand" to="/">
           Монитор
-        </a>
+        </Link>
         <button
           className="navbar-toggler"
           type="button"
@@ -32,9 +32,9 @@ const NavBar = () => {
             {!isLoggedIn && (
               <>
                 <li className="nav-item">
-                  <a className="nav-link" href="#">
+                  <Link className="nav-link" to="/register">
                     Регистрация
-                  </a>
+                  </Link>
                 </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/login">

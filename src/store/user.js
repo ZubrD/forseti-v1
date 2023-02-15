@@ -3,6 +3,7 @@ import authService from "../services/auth.service";
 import localStorageService from "../services/localStorage.service";
 // import userService from "../services/user.service";
 import { genereteAuthError } from "../utils/generateAuthError";
+import history from "../utils/history";
 
 const initialState = localStorageService.getAccessToken()
   ? {
@@ -73,10 +74,13 @@ export const login =
     try {
       const data = await authService.login({ email, password });
       localStorageService.setTokens(data);
-      dispatch(authRequestSuccess({ userId: data.userId, userName: data.userName }));
+      dispatch(
+        authRequestSuccess({ userId: data.userId, userName: data.userName })
+      );
 
       window.history.back();
     } catch (error) {
+      console.log("Логин ", error.response.data.error);
       const { code, message } = error.response.data.error;
       if (code === 400) {
         const errorMessage = genereteAuthError(message);
@@ -90,6 +94,27 @@ export const login =
 export const logOut = () => (dispatch) => {
   localStorageService.removeAuthData();
   dispatch(userLoggedOut());
+};
+
+export const signUp = (payload) => async (dispatch) => {
+  dispatch(authRequested());
+  try {
+    const data = await authService.register(payload);
+    console.log("data ", data);
+
+    if (!data.error.code) {
+      localStorageService.setTokens(data);
+      dispatch(authRequestSuccess({ userId: data.userId }));
+      window.location.href = "http://localhost:3000"
+    } else {
+      if (data.error.code === 400) {
+        const errorMessage = genereteAuthError(data.error.message);
+        dispatch(authRequestFailed(errorMessage));
+      }
+    }
+  } catch (error) {
+    // console.log(error)
+  }
 };
 
 export const getIsLoggedIn = () => (state) => state.user.isLoggedIn;

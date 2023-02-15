@@ -9,6 +9,7 @@ const tokenService = require("../services/token.service");
 pgQuery.config(connection.connectViaPgQueries); // Соединение с базой через postgresql-query
 
 const router = express.Router({ mergeParams: true });
+
 router.post("/signUp", [
   check("email", "Некорректный емэйл").isEmail(),
   check("password", "Миниимальная длина пароля 8 символов").isLength({
@@ -18,7 +19,7 @@ router.post("/signUp", [
     try {
       const errors = validationResult(request);
       if (!errors.isEmpty()) {
-        return response.status(400).json({
+        return response.status(400).send({
           error: {
             message: "INVALID_REGISTER_DATA",
             code: 400,
@@ -28,6 +29,30 @@ router.post("/signUp", [
       }
 
       const { email, username, password } = request.body;
+
+      const testEmail = "SELECT email FROM public.auth_user WHERE email=$1 ORDER BY id ASC"
+      const testEmailValue = [email]
+      const emailExists = await pgQuery.query(testEmail,testEmailValue)
+      if(emailExists.length !== 0){
+        return response.send({
+          error: {
+            message: "THIS_EMAIL_ALREADY_EXISTS",
+            code: 400
+          }
+        })
+      }
+
+      const testUser = "SELECT username FROM public.auth_user WHERE username=$1 ORDER BY id ASC"
+      const testUserValue = [username]
+      const userExists = await pgQuery.query(testUser,testUserValue)
+      if(userExists.length !== 0){
+        return response.send({
+          error: {
+            message: "THIS_USERNAME_ALREADY_USES",
+            code: 400
+          }
+        })
+      }      
 
       const hashedPassword = await bcrypt.hash(password, 12);
       const myId = uuidv4();
@@ -48,10 +73,10 @@ router.post("/signUp", [
         .send({ Пользователь: username, userId: myId, ...tokens });
     } catch (error) {
       console.log("Что-то не так с регистрацией:", error.message);
-      return response.status(400).json({
+      return response.status(400).send({
         error: {
           message: "USER_EXISTS",
-          code: 400,
+          code: 499,
         },
       });
     }
