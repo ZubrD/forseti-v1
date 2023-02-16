@@ -1,7 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import httpService from "../services/http.service";
-
-const regionEndpoint = "regions/";
+import regionService from "../services/region.service";
 
 const regionSlice = createSlice({
   name: "region",
@@ -32,29 +30,13 @@ const { regionRequested, regionReceived, regionRequestFailed } = actions;
 export const loadRegion = () => async (dispatch) => {
   dispatch(regionRequested());
   try {
-    const regionData = await regionService.get();   // Получение с сервера данных по регионам
+    const regionData = await regionService.getTotalRegionsList();   // Получение с сервера данных по регионам
     dispatch(regionReceived(regionData));
   } catch (error) {
     dispatch(regionRequestFailed(error));
   }
 };
 
-const regionService = {
-  get: async () => {
-    const { data } = await httpService.get(regionEndpoint);
-    return data;
-  },
-};
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-// authService.login({  // Отправка логина и пароля на сервер
-//   "email": "2f@mail.ru",
-//   "password": "12345678"
-// })
-
-//////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const getRegion = () => (state) => state.region.entities;
 

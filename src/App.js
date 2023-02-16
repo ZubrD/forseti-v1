@@ -11,7 +11,7 @@ function App() {
   return (
     <Switch>
       <Route path="/rules/:ruleNumber/" component={Rule} />
-      <Route path="/rules" component={Rule} />
+      {/* <Route path="/rules" component={Rule} /> */}
       <Route path="/login" component={Login} />
       <Route path="/logout" component={LogOut} />
       <Route path="/register" component={Register} />

@@ -4,9 +4,9 @@ import config from "../config.json";
 
 const httpAuth = axios.create({
   baseURL: config.apiEndpoint + "auth/",
-  params: {
-    key: process.env.REACT_APP_FIREBASE_KEY,
-  },
+  // params: {
+  //   key: process.env.REACT_APP_FIREBASE_KEY,
+  // },
 });
 
 const authService = {

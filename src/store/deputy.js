@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
-import httpService from "../services/http.service";
+import deputyService from "../services/deputy.service";
 
-const deputyEndpoint = "deputy/";
 
 const deputySlice = createSlice({
   name: "deputy",
@@ -31,18 +30,11 @@ const { deputyRequested, deputyReceived, deputyRequestFailed } = actions;
 export const loadDeputyList = () => async (dispatch) => {
   dispatch(deputyRequested());
   try {
-    const deputyData = await deputyService.get();   // Получение с сервера данных по депутатам
+    const deputyData = await deputyService.getTotalDeputiesList();   // Получение с сервера данных по депутатам
     dispatch(deputyReceived(deputyData));
   } catch (error) {
     dispatch(deputyRequestFailed(error));
   }
-};
-
-const deputyService = {
-  get: async () => {
-    const { data } = await httpService.get(deputyEndpoint);
-    return data;
-  },
 };
 
 

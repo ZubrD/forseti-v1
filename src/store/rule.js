@@ -1,7 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
-import httpService from "../services/http.service";
-
-const ruleEndpoint = "rule/";
+import ruleService from "../services/rule.service";
 
 const ruleSlice = createSlice({
   name: "rule",
@@ -32,18 +30,11 @@ const { ruleRequested, ruleReceived, ruleRequestFailed } = actions;
 export const loadRuleList = () => async (dispatch) => {
   dispatch(ruleRequested());
   try {
-    const ruleData = await ruleService.get();   // Получение с сервера данных по законам
+    const ruleData = await ruleService.getTotalRulesList();   // Получение с сервера данных по законам
     dispatch(ruleReceived(ruleData));
   } catch (error) {
     dispatch(ruleRequestFailed(error));
   }
-};
-
-const ruleService = {
-  get: async () => {
-    const { data } = await httpService.get(ruleEndpoint);
-    return data;
-  },
 };
 
 export const getRule = () => (state) => state.rule.entities;
