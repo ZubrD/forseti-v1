@@ -1,26 +1,35 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { getRule } from "../store/rule";
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { getOneRule, loadOneRule } from "../store/rule";
 import { getDeputy } from "../store/deputy";
 import { MDBAccordion, MDBAccordionItem } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import { nanoid } from "nanoid";
 
 const Rule = ({ match }) => {
-  const rules = useSelector(getRule());
-  const deputy = useSelector(getDeputy());
-  const ruleNumber = match.params.ruleNumber;
-  let findedRule;
-  if (rules) {
-    findedRule = rules.find((item) => ruleNumber === String(item.rule_number));
-  } else {
-    findedRule = null;
-  }
 
-  const ruleAuthorArray = findedRule.author.replaceAll(",", "").split(" ");
-  const deputyShortName = deputy.map((item) => item.short_name); // Депутатская фамилия с инициалами
-  const initialisationDate = new Date(findedRule.initialization_date);
-  console.log(initialisationDate.getFullYear());
+  const dispatch = useDispatch();
+  const ruleNumber = match.params.ruleNumber;
+  const ruleFromStore = useSelector(getOneRule());
+  const deputy = useSelector(getDeputy());
+
+  useEffect(() => {
+    dispatch(loadOneRule(ruleNumber));
+  }, []);
+
+  let ruleAuthorArray
+  let deputyShortName
+  let initialisationDate
+  let findedRule
+  if (!ruleFromStore) {
+    console.log("Загрузка закона...");
+  } else {
+    console.log("Загрузка закона завершена");
+    findedRule = ruleFromStore[0]
+    ruleAuthorArray = findedRule.author.replaceAll(",", "").split(" ");
+    deputyShortName = deputy.map((item) => item.short_name); // Депутатская фамилия с инициалами
+    initialisationDate = new Date(findedRule.initialization_date);
+  }
 
   return (
     <>
@@ -68,7 +77,9 @@ const Rule = ({ match }) => {
                   );
                   if (nameForLink) {
                     return (
-                      <Link to={`deputy/${nameForLink.name}`} key={nanoid()}>{item} </Link>
+                      <Link to={`deputy/${nameForLink.name}`} key={nanoid()}>
+                        {item}{" "}
+                      </Link>
                     );
                   }
                 } else return <span key={nanoid()}>{item} </span>; // если нет совпадения, то выводится без гиперссылки
@@ -83,21 +94,21 @@ const Rule = ({ match }) => {
             </div>
           </div>
           {/* //////////////////////////////   РАССМОТРЕНИЕ ЗАКОНА   ////////////////////////////////////// */}
-          {!findedRule.populated && !findedRule.rejection && (  // Не проголосовали и не отклонили
-            <div className="row">
-              <div className="col">
-                <p>
-                  Законопроект на рассмотрении с{" "}
-                  {findedRule.initialization_date}
-                </p>
+          {!findedRule.populated &&
+            !findedRule.rejection && ( // Не проголосовали и не отклонили
+              <div className="row">
+                <div className="col">
+                  <p>
+                    Законопроект на рассмотрении с{" "}
+                    {findedRule.initialization_date}
+                  </p>
+                </div>
               </div>
-            </div>
-          )}
+            )}
         </div>
       )}
     </>
   );
-  // return <>{rules && <h1>Закон {finded.title}</h1>}</>;
 };
 
 export default Rule;

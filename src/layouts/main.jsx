@@ -7,7 +7,6 @@ import { getRegion, loadRegion } from "../store/region";
 import SelectRegion from "../components/selectRegion";
 import SelectDeputy from "../components/selectDeputy";
 import SearchRule from "../components/searchRule";
-import { Link } from "react-router-dom";
 import NavBar from "../components/navBar";
 
 const Main = () => {
