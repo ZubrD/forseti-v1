@@ -5,3 +5,152 @@
 .row > * {
     border: 1px solid #b3b1b1;
 }
+
+
+/*****************************************************************************************************/
+/*                                          СТРАНИЦА ЗАКОНА                                          */
+/*****************************************************************************************************/
+
+#div-set-likes, #div-set-dislikes, #div-span-likes, #div-span-dislikes {
+    text-align: center;
+}
+
+button {
+    cursor: pointer;
+}
+
+#set-likes, #set-dislikes {
+    width: 200px;
+    height: 70px;
+    margin-top: 30px;
+    font-size: 30px;
+}
+
+.button-liked {
+    background-color: green;
+}
+
+.button-disliked {
+    background-color: red;
+}
+
+.button-not-liked, .button-not-disliked {
+    background-color: lightgray;
+}
+
+.div-title {
+    text-align: center;
+}
+
+#span-likes, #span-dislikes {
+    padding-bottom: 20px;
+    font-size: 40px;
+}
+
+.table-result-voting {
+    margin-top: 40px;
+}
+
+#DeputyChart, #VoxPopuliChart {
+    margin-top: 9px;
+}
+
+.text-bold {
+    font-weight: bold;
+}
+
+.text-italic {
+    font-style: italic;
+}
+
+.text-comment {
+    margin-left: 10px;
+}
+
+#comment-textarea, #task-textarea, #suggestion-textarea {
+    width: 400px;
+}
+
+.rules-in-table-index td {
+    font-size: 12px;
+}
+
+.rules-in-table-index td p {
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.rules-in-table-index td:first-child{
+    vertical-align: top;
+}
+
+.rules-in-table-index tr:nth-child(odd){
+    background-color: #e3e3e3;
+}
+
+#drop1, #drop2, #drop3, #drop4, #drop5, #drop6, #drop7 {
+    text-align: center;
+}
+
+#p-random-rule {
+    margin-top: 15px;
+}
+
+#div-send-vote {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#select-vote-group {
+    margin:50px 0;
+}
+
+#button-send-vote {
+    margin-bottom: 50px;
+    font-size: x-large;
+}
+
+.radio-font {
+    font-size: x-large;
+}
+
+#footer {
+    height: 200px;
+}
+
+#suggestion-title {
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+#footer p {
+    margin-top: 50px;
+}
+
+#last-hr {
+    margin-bottom: 300px;
+}
+
+.border-none {
+    border: none;
+}
+
+#p-usefulness {
+    text-align: center;
+    font-size: xx-large;
+}
+
+.tasks-img {
+    max-height: 2.5%;
+    max-width: 2.5%;
+    cursor: pointer;
+}
+
+.task-default {
+    opacity: 0.4;
+}
+
+.task-agree {
+    opacity: 1;
+}

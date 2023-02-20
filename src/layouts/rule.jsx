@@ -5,10 +5,12 @@ import { getDeputy } from "../store/deputy";
 import { MDBAccordion, MDBAccordionItem } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import { nanoid } from "nanoid";
+import NavBar from "../components/navBar";
+import { getIsLoggedIn, getUserFromStore } from "../store/user";
 
 const Rule = ({ match }) => {
-
   const dispatch = useDispatch();
+  const userId = useSelector(getUserFromStore())
   const ruleNumber = match.params.ruleNumber;
   const ruleFromStore = useSelector(getOneRule());
   const deputy = useSelector(getDeputy());
@@ -17,22 +19,54 @@ const Rule = ({ match }) => {
     dispatch(loadOneRule(ruleNumber));
   }, []);
 
-  let ruleAuthorArray
-  let deputyShortName
-  let initialisationDate
-  let findedRule
+  const isLoggedIn = useSelector(getIsLoggedIn());
+
+  let ruleAuthorArray;
+  let deputyShortName;
+  let initialisationDate;
+  let findedRule;
+  let initialisationDateString;
+  let workDuration;
   if (!ruleFromStore) {
     // console.log("Загрузка закона...");
   } else {
     // console.log("Загрузка закона завершена");
-    findedRule = ruleFromStore[0]
+    findedRule = ruleFromStore[0];
     ruleAuthorArray = findedRule.author.replaceAll(",", "").split(" ");
     deputyShortName = deputy.map((item) => item.short_name); // Депутатская фамилия с инициалами
+
     initialisationDate = new Date(findedRule.initialization_date);
+    const initYear = initialisationDate.getFullYear();
+    const initDay = initialisationDate.getDate();
+    const monthsArray = [
+      "января",
+      "февраля",
+      "марта",
+      "апреля",
+      "мая",
+      "июня",
+      "июля",
+      "августа",
+      "сентября",
+      "октября",
+      "ноября",
+      "декабря",
+    ];
+    const initMonth = monthsArray[initialisationDate.getMonth()];
+    initialisationDateString = initDay + " " + initMonth + " " + initYear;
+
+    workDuration =
+      (new Date(findedRule.voting_date) -
+        new Date(findedRule.initialization_date)) /
+      1000 /
+      60 /
+      60 /
+      24;
   }
 
   return (
     <>
+      <NavBar />
       {findedRule && (
         <div className="container">
           <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
@@ -75,9 +109,10 @@ const Rule = ({ match }) => {
                   const nameForLink = deputy.find(
                     (dep) => dep.short_name === item
                   );
-                  if (nameForLink) { // .. - это переход на уровень выше от текущего 
+                  if (nameForLink) {
+                    // .. - это переход на уровень выше от текущего
                     return (
-                      <Link to={`../deputy/${nameForLink.name}`} key={nanoid()}> 
+                      <Link to={`../deputy/${nameForLink.name}`} key={nanoid()}>
                         {item}{" "}
                       </Link>
                     );
@@ -99,12 +134,62 @@ const Rule = ({ match }) => {
               <div className="row">
                 <div className="col">
                   <p>
-                    Законопроект на рассмотрении с{" "}
-                    {findedRule.initialization_date}
+                    Законопроект на рассмотрении с {initialisationDateString}
                   </p>
                 </div>
               </div>
             )}
+          {findedRule.rejection && (
+            <div className="row">
+              <div className="col">
+                <h4 style={{ color: "red" }}>Законопроект отклонён</h4>
+              </div>
+            </div>
+          )}
+          {findedRule.populated && (
+            <div className="row">
+              <div className="col">
+                <h4 style={{ color: "indigo" }}>
+                  Законопроект был на рассмотрении {workDuration} дней
+                </h4>
+              </div>
+            </div>
+          )}
+          {/* //////////////////////// ВАМ ЭТОТ ЗАКОН НУЖЕН? /////////////////////////// */}
+          {isLoggedIn && (
+            <>
+              <div className="row">
+                <div className="col div-title" id="div-title-likes">
+                  <h3>Этот закон Вам нужен?</h3>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col-6" id="div-set-likes">
+                  <button
+                    id="set-likes"
+                    className="button-{{ liked_or_not }}"
+                    // username="{{ user.username }}"
+                    userId={userId}
+                    rule-number={ruleNumber}
+                    liked="{{ liked_or_not }}"
+                  >
+                    Да
+                  </button>
+                </div>
+                <div className="col-6" id="div-set-dislikes">
+                  <button
+                    id="set-dislikes"
+                    className="button-{{ disliked_or_not }}"
+                    userId={userId}
+                    rule-number={ruleNumber}
+                    disliked="{{ disliked_or_not }}"
+                  >
+                    Нет
+                  </button>
+                </div>
+              </div>
+            </>
+          )}
         </div>
       )}
     </>
