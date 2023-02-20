@@ -22,9 +22,9 @@ const Rule = ({ match }) => {
   let initialisationDate
   let findedRule
   if (!ruleFromStore) {
-    console.log("Загрузка закона...");
+    // console.log("Загрузка закона...");
   } else {
-    console.log("Загрузка закона завершена");
+    // console.log("Загрузка закона завершена");
     findedRule = ruleFromStore[0]
     ruleAuthorArray = findedRule.author.replaceAll(",", "").split(" ");
     deputyShortName = deputy.map((item) => item.short_name); // Депутатская фамилия с инициалами
@@ -75,9 +75,9 @@ const Rule = ({ match }) => {
                   const nameForLink = deputy.find(
                     (dep) => dep.short_name === item
                   );
-                  if (nameForLink) {
+                  if (nameForLink) { // .. - это переход на уровень выше от текущего 
                     return (
-                      <Link to={`deputy/${nameForLink.name}`} key={nanoid()}>
+                      <Link to={`../deputy/${nameForLink.name}`} key={nanoid()}> 
                         {item}{" "}
                       </Link>
                     );

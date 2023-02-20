@@ -5,7 +5,7 @@ import ruleReducer from "./rule";
 import userReducer from "./user";
 
 const rootReducer = combineReducers({
-  deputy: deputyReducer,
+  deputies: deputyReducer,
   rules: ruleReducer,
   region: regionReducer,
   user: userReducer

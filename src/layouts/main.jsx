@@ -8,14 +8,16 @@ import SelectRegion from "../components/selectRegion";
 import SelectDeputy from "../components/selectDeputy";
 import SearchRule from "../components/searchRule";
 import NavBar from "../components/navBar";
+import {useHistory} from 'react-router-dom'
 
 const Main = () => {
+  const history = useHistory()
   const dispatch = useDispatch();
   const [regionDeputiesList, setRegionDeputiesList] = useState();
   const [deputyDisabled, setDeputyDisabled] = useState(true);
   const [searchRule, setSearchRule] = useState("");
   const rule = useSelector(getRule());
-  const deputy = useSelector(getDeputy());
+  const deputies = useSelector(getDeputy());
   const region = useSelector(getRegion());
   let hightlight = true; // Через useState не получается - бесконечный рендеринг
 
@@ -23,12 +25,20 @@ const Main = () => {
     const selectedRegion = region.find(
       (reg) => reg.id === Number(target.value)
     );
-    const regionDeputies = deputy.filter((dep) =>
+    const regionDeputies = deputies.filter((dep) =>
       dep.region.includes(selectedRegion.name)
     );
     setRegionDeputiesList(regionDeputies);
     setDeputyDisabled(false);
   };
+
+  const handleSelectDeputy=({target})=>{
+    console.log(target.value)
+    const selectedDeputy = deputies.find(item=> item.id === Number(target.value))
+    console.log(selectedDeputy.name)
+    history.push(`../deputy/${selectedDeputy.name}`)
+
+  }
 
   const handleSearchRule = ({ target }) => {
     setSearchRule(target.value);
@@ -62,6 +72,7 @@ const Main = () => {
           <SelectDeputy
             deputiesList={regionDeputiesList}
             disabledStatus={deputyDisabled}
+            onChange={handleSelectDeputy}
           />
         )}
       </div>

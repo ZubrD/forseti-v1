@@ -10,5 +10,14 @@ router.get("/deputies-total-list", async (request, response)=>{
   const deputiesList = await pgQuery.query(selectDeputies)
   response.status(200).send(deputiesList)
 })
+router.get("/:deputyName", async (request, response)=> {
+  try{
+    const {deputyName}=request.params
+    console.log(deputyName)
+    response.status(200).send(deputyName)
+  } catch(error){
+
+  }
+})
 
 module.exports = router;
