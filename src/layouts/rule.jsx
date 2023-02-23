@@ -7,16 +7,20 @@ import { Link } from "react-router-dom";
 import { nanoid } from "nanoid";
 import NavBar from "../components/navBar";
 import { getIsLoggedIn, getUserFromStore } from "../store/user";
+import {
+  handleClickUnnecessary,
+  handleClickNecessary,
+} from "../utils/likesDislikes";
 
 const Rule = ({ match }) => {
   const dispatch = useDispatch();
-  const userId = useSelector(getUserFromStore())
+  const userId = useSelector(getUserFromStore());
   const ruleNumber = match.params.ruleNumber;
-  const ruleFromStore = useSelector(getOneRule());
+  const ruleAndUserFromStore = useSelector(getOneRule());
   const deputy = useSelector(getDeputy());
 
   useEffect(() => {
-    dispatch(loadOneRule(ruleNumber));
+    dispatch(loadOneRule(ruleNumber, userId));
   }, []);
 
   const isLoggedIn = useSelector(getIsLoggedIn());
@@ -27,11 +31,29 @@ const Rule = ({ match }) => {
   let findedRule;
   let initialisationDateString;
   let workDuration;
-  if (!ruleFromStore) {
+  let currentUser;
+  let necessity;
+  let unNecessity;
+  let countPrefer;
+  let countNotPrefer;
+  let usefulness = 0;
+  let usefulnessColor = "";
+  let comments;
+
+  if (!ruleAndUserFromStore) {
     // console.log("Загрузка закона...");
   } else {
     // console.log("Загрузка закона завершена");
-    findedRule = ruleFromStore[0];
+    // console.log(ruleAndUserFromStore);
+    findedRule = ruleAndUserFromStore.oneRule[0]; // Данные о законе
+    currentUser = ruleAndUserFromStore.currUser; // Имя пользователя
+    necessity = ruleAndUserFromStore.prefer; // Нужность закона для этого пользователя
+    unNecessity = ruleAndUserFromStore.notPrefer;
+    countPrefer = Number(ruleAndUserFromStore.countPrefer); // Количество лайков за закон (закон нужен)
+    countNotPrefer = Number(ruleAndUserFromStore.countNotPrefer); // --- дизлайков (закон не нужен)
+    comments = ruleAndUserFromStore.comments;
+    console.log(comments);
+
     ruleAuthorArray = findedRule.author.replaceAll(",", "").split(" ");
     deputyShortName = deputy.map((item) => item.short_name); // Депутатская фамилия с инициалами
 
@@ -62,6 +84,28 @@ const Rule = ({ match }) => {
       60 /
       60 /
       24;
+
+    const setLikes = document.querySelector("#set-likes"); // Если пользователь уже проголосовал за бесполезность закона,
+    const setDislikes = document.querySelector("#set-dislikes"); // кнопка 'Да' блокируется и наоборот. Разблокировать можно только отменив
+    if (setLikes) {
+      // предыдущий выбор
+      if (unNecessity) setLikes.setAttribute("disabled", "disabled");
+    }
+    if (setDislikes) {
+      if (necessity) setDislikes.setAttribute("disabled", "disabled");
+    }
+
+    if (countPrefer !== 0 || countNotPrefer !== 0) {
+      usefulness = Math.round(
+        (countPrefer / (countPrefer + countNotPrefer)) * 100
+      );
+      if (usefulness > 50) {
+        usefulnessColor = "green";
+      }
+      if (usefulness < 50) {
+        usefulnessColor = "red";
+      }
+    }
   }
 
   return (
@@ -167,11 +211,11 @@ const Rule = ({ match }) => {
                 <div className="col-6" id="div-set-likes">
                   <button
                     id="set-likes"
-                    className="button-{{ liked_or_not }}"
-                    // username="{{ user.username }}"
-                    userId={userId}
+                    className={"button-" + (necessity ? "liked" : "not-liked")}
+                    username={currentUser}
                     rule-number={ruleNumber}
-                    liked="{{ liked_or_not }}"
+                    liked={necessity ? "liked" : "not-liked"}
+                    onClick={handleClickNecessary}
                   >
                     Да
                   </button>
@@ -179,15 +223,72 @@ const Rule = ({ match }) => {
                 <div className="col-6" id="div-set-dislikes">
                   <button
                     id="set-dislikes"
-                    className="button-{{ disliked_or_not }}"
-                    userId={userId}
+                    className={
+                      "button-" + (unNecessity ? "disliked" : "not-disliked")
+                    }
                     rule-number={ruleNumber}
-                    disliked="{{ disliked_or_not }}"
+                    disliked={unNecessity ? "disliked" : "not-disliked"}
+                    onClick={handleClickUnnecessary}
                   >
                     Нет
                   </button>
                 </div>
               </div>
+              <div className="row">
+                <div className="col-6" id="div-span-likes">
+                  <p id="span-likes">{countPrefer}</p>
+                </div>
+                <div className="col-6" id="div-span-dislikes">
+                  <p id="span-dislikes">{countNotPrefer}</p>
+                </div>
+              </div>
+              {usefulness && (
+                <div className="row">
+                  <div className="col">
+                    <p id="p-usefulness" style={{ color: usefulnessColor }}>
+                      Нужность данного закона составляет {usefulness}%
+                    </p>
+                  </div>
+                </div>
+              )}
+              {/* //////////////////////////////////// ОТПРАВИТЬ КОММЕНТАРИЙ ////////////////////////////// */}
+              <div className="row">
+                <div className="col">
+                  <h4>Ваш комментарий</h4>
+                </div>
+              </div>
+              <div className="row">
+                <div className="col">
+                  <form>
+                    <textarea id="comment-textarea" name="text"></textarea>
+                    <input
+                      type="hidden"
+                      name="name"
+                      // value="{{ user.username }}"
+                    />
+                    <br />
+                    <button type="submit" className="btn btn-success">
+                      Отправить
+                    </button>
+                  </form>
+                </div>
+              </div>
+              {/* //////////////////////////////////// АККОРДЕОН КОММЕНТАРИЕВ //////////////////////////////////////// */}
+              <div className="row">
+                <MDBAccordion>
+                  <MDBAccordionItem collapseId={1} headerTitle="Комментарии">
+                    {comments.map((comment) => (
+                      <>
+                        <span className="text-bold">{comment.name} </span>
+                        <span className="text-italic">от {comment.date1}</span>
+                        <p className="text-comment">{comment.text}</p>
+                      </>
+                    ))}
+                  </MDBAccordionItem>
+                </MDBAccordion>
+              </div>
+              {/* ///////////////////////////////////////  ГОЛОСОВАНИЯ  ////////////////////////////////////////////// */}
+              
             </>
           )}
         </div>

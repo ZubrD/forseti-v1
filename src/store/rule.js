@@ -57,16 +57,17 @@ export const loadRuleList = () => async (dispatch) => {
   }
 };
 
-export const loadOneRule = (ruleNumber) => async (dispatch) => {
+export const loadOneRule = (ruleNumber, userId) => async (dispatch) => {
   // ruleNumber - номер закона, передаётся с главной страницы
   dispatch(oneRuleRequested());
   try {
-    const ruleData = await ruleService.getOneRule(ruleNumber); // Получение с сервера данных по законам
+    const ruleData = await ruleService.getOneRule(ruleNumber, userId); // Получение с сервера данных по законам
     dispatch(oneRuleReceived(ruleData));
   } catch (error) {
     dispatch(oneRuleRequetFailed(error));
   }
 };
+
 
 export const getRule = () => (state) => state.rules.entities;
 export const getOneRule = () => (state) => state.rules.rule;
