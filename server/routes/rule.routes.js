@@ -26,7 +26,10 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
   try {
     const { ruleNumber, userId } = request.params;
     const selectOneRule =
-      "SELECT * FROM public.forseti_rules WHERE rule_number=$1 ORDER BY id ASC";
+      "SELECT id, title, rule_number, description, initialization_date, rule_link, " +
+      "voting_date, visits, populated, voted, author, branch, rejection, yet_voted, " +
+      "set_start_period, populi_voted, result_deputy_vote, result_populi_vote, constitutional " +
+      "FROM public.forseti_rules WHERE rule_number=$1 ORDER BY id ASC";
     const oneRuleValue = [ruleNumber];
     const oneRule = await pgQuery.query(selectOneRule, oneRuleValue);
 
@@ -80,7 +83,7 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
       notPrefer: notPreferOrNot,
       countPrefer: countPrefer[0].count,
       countNotPrefer: countNotPrefer[0].count,
-      comments: ruleComments
+      comments: ruleComments,
     });
   } catch (error) {
     response.send(error);

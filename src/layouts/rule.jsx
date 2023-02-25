@@ -11,6 +11,7 @@ import {
   handleClickUnnecessary,
   handleClickNecessary,
 } from "../utils/likesDislikes";
+import DeputyPieChart from "../components/deputyPieChart";
 
 const Rule = ({ match }) => {
   const dispatch = useDispatch();
@@ -39,6 +40,11 @@ const Rule = ({ match }) => {
   let usefulness = 0;
   let usefulnessColor = "";
   let comments;
+  let populated;
+  let resultDeputyVote;
+  let resultPopuliVote;
+  let resultDeputyVoteColor;
+  let resultPopuliVoteColor;
 
   if (!ruleAndUserFromStore) {
     // console.log("Загрузка закона...");
@@ -52,8 +58,11 @@ const Rule = ({ match }) => {
     countPrefer = Number(ruleAndUserFromStore.countPrefer); // Количество лайков за закон (закон нужен)
     countNotPrefer = Number(ruleAndUserFromStore.countNotPrefer); // --- дизлайков (закон не нужен)
     comments = ruleAndUserFromStore.comments;
-    console.log(comments);
-
+    populated = ruleAndUserFromStore.oneRule[0].populated; // После занесения в таблицу закона результатов голосования депутатами, отдельно запускается
+    // скрипт заполнения таблиы finaltable (Голосования), при этом в таблице Законы для этого закона
+    // автоматически ставится отметка в поле Депутаты
+    resultDeputyVote = ruleAndUserFromStore.oneRule[0].result_deputy_vote; // Результат голосования депутатов
+    resultPopuliVote = ruleAndUserFromStore.oneRule[0].result_populi_vote; // ---       ------      народа
     ruleAuthorArray = findedRule.author.replaceAll(",", "").split(" ");
     deputyShortName = deputy.map((item) => item.short_name); // Депутатская фамилия с инициалами
 
@@ -105,6 +114,22 @@ const Rule = ({ match }) => {
       if (usefulness < 50) {
         usefulnessColor = "red";
       }
+    }
+
+    if (resultDeputyVote === "Отклонён") {
+      resultDeputyVoteColor = "gray";
+    } else if (resultDeputyVote === "За") {
+      resultDeputyVoteColor = "green";
+    } else if (resultDeputyVote === "Против") {
+      resultDeputyVoteColor = "red";
+    }
+
+    if (resultPopuliVote === "Отклонён") {
+      resultPopuliVoteColor = "gray";
+    } else if (resultPopuliVote === "За") {
+      resultPopuliVoteColor = "green";
+    } else if (resultPopuliVote === "Против") {
+      resultPopuliVoteColor = "red";
     }
   }
 
@@ -278,17 +303,49 @@ const Rule = ({ match }) => {
                 <MDBAccordion>
                   <MDBAccordionItem collapseId={1} headerTitle="Комментарии">
                     {comments.map((comment) => (
-                      <>
+                      <div key={nanoid()}>
                         <span className="text-bold">{comment.name} </span>
                         <span className="text-italic">от {comment.date1}</span>
                         <p className="text-comment">{comment.text}</p>
-                      </>
+                      </div>
                     ))}
                   </MDBAccordionItem>
                 </MDBAccordion>
               </div>
               {/* ///////////////////////////////////////  ГОЛОСОВАНИЯ  ////////////////////////////////////////////// */}
-              
+              {populated && (
+                <>
+                  <div className="row">
+                    {/* Если прошло голосование и FinalTable заполнена */}
+                    <div className="col div-title">
+                      <h3>Голосование</h3>
+                    </div>
+                  </div>
+                  <div className="row" id="one_rule_result_deputy">
+                    <div className="col-6 div-title">
+                      <h4>
+                        Депутаты:{" "}
+                        <span style={{ color: resultDeputyVoteColor }}>
+                          {resultDeputyVote}
+                        </span>
+                      </h4>
+                    </div>
+                    <div className="col-6 div-title">
+                      <h4>
+                        Народ:{" "}
+                        <span style={{ color: resultPopuliVoteColor }}>
+                          {resultPopuliVote}
+                        </span>
+                      </h4>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col-xs-6 col-sm-6 col-lg-3 col-simple chart-pos">
+                      <DeputyPieChart />
+                    </div>
+                  </div>
+                </>
+              )}
             </>
           )}
         </div>
