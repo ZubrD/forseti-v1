@@ -35,10 +35,4 @@ const PopuliPieChart = (
   return <Pie data={dataPie} options={optionsPie} />;
 };
 
-// populiVoteYes = Number(ruleAndUserFromStore.populiVoteYes); //Количество голосов народв "За" при голосовании за закон
-// populiVoteNo = Number(ruleAndUserFromStore.populiVoteNo);
-// populiVoteAbstained = Number(ruleAndUserFromStore.populiVoteAbst);
-
-// populiVoteTotal = populiVoteYes + populiVoteNo + populiVoteAbstained;
-
 export default PopuliPieChart;

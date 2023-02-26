@@ -157,7 +157,7 @@ button {
 
 /* /////////////////////////////////// ДИАГРАММЫ И ТАБЛИЦЫ ГОЛОСОВАНИЯ ///////////////////////////////// */
 
-.deputy-chart {
+.deputy-chart, .populi-chart {
     width: 200px !important;
     height: 200px !important;
     margin: auto;
