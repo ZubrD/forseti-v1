@@ -154,3 +154,56 @@ button {
 .task-agree {
     opacity: 1;
 }
+
+/* /////////////////////////////////// ДИАГРАММЫ И ТАБЛИЦЫ ГОЛОСОВАНИЯ ///////////////////////////////// */
+
+.deputy-chart {
+    width: 200px !important;
+    height: 200px !important;
+    margin: auto;
+}
+
+.squ-yes, .squ-no, .squ-abs, .squ-not-v {
+    width: 20px;
+    height: 20px;
+}
+
+.squ-yes {
+    background-color: green;
+}
+
+.squ-no {
+    background-color: red;
+}
+
+.squ-abs {
+    background-color: lightblue;
+}
+
+.squ-not-v {
+    background-color: gray;
+}
+
+#v-yes, #p-yes {
+    color: green;
+    font-size: 14px;
+    margin: 5px 0 5px 0;
+}
+
+#v-no, #p-no {
+    color: red;
+    font-size: 14px;
+    margin: 5px 0 5px 0;
+}
+
+#v-abstained, #p-abstained {
+    color: lightblue;
+    font-size: 14px;
+    margin: 5px 0 5px 0;
+}
+
+#v-not-vote {
+    color: grey;
+    font-size: 14px;
+    margin: 5px 0 5px 0;
+}

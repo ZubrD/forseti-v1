@@ -45,6 +45,15 @@ const Rule = ({ match }) => {
   let resultPopuliVote;
   let resultDeputyVoteColor;
   let resultPopuliVoteColor;
+  let deputyVoteYes;
+  let deputyVoteNo;
+  let deputyVoteAbstained;
+  let deputyNotVote;
+  let deputyVoteTotal;
+  let deputyVoteYesPr;
+  let deputyVoteNoPr;
+  let deputyVoteAbstainedPr;
+  let deputyNotVotePr;
 
   if (!ruleAndUserFromStore) {
     // console.log("Загрузка закона...");
@@ -63,6 +72,25 @@ const Rule = ({ match }) => {
     // автоматически ставится отметка в поле Депутаты
     resultDeputyVote = ruleAndUserFromStore.oneRule[0].result_deputy_vote; // Результат голосования депутатов
     resultPopuliVote = ruleAndUserFromStore.oneRule[0].result_populi_vote; // ---       ------      народа
+
+    deputyVoteYes = Number(ruleAndUserFromStore.deputyVoteYes); //Количество голосов депутатов "За" при голосовании за закон
+    deputyVoteNo = Number(ruleAndUserFromStore.deputyVoteNo);
+    deputyVoteAbstained = Number(ruleAndUserFromStore.deputyVoteAbst);
+    deputyNotVote = Number(ruleAndUserFromStore.deputyNotVote);
+
+    deputyVoteTotal =
+      deputyVoteYes + deputyVoteNo + deputyVoteAbstained + deputyNotVote;
+    if (deputyVoteTotal) {
+      deputyVoteYesPr =
+        Math.round((deputyVoteYes / deputyVoteTotal) * 100 * 10) / 10; // Округление до одного знака: *10 и /10
+      deputyVoteNoPr =
+        Math.round((deputyVoteNo / deputyVoteTotal) * 100 * 10) / 10;
+      deputyVoteAbstainedPr =
+        Math.round((deputyVoteAbstained / deputyVoteTotal) * 100 * 10) / 10;
+      deputyNotVotePr =
+        Math.round((deputyNotVote / deputyVoteTotal) * 100 * 10) / 10;
+    }
+
     ruleAuthorArray = findedRule.author.replaceAll(",", "").split(" ");
     deputyShortName = deputy.map((item) => item.short_name); // Депутатская фамилия с инициалами
 
@@ -339,9 +367,67 @@ const Rule = ({ match }) => {
                       </h4>
                     </div>
                   </div>
+                  {/* ////////////////////////   ДИАГРАММА ГОЛОСОВАНИЯ ДЕПУТАТОВ    //////////////////////////////// */}
                   <div className="row">
                     <div className="col-xs-6 col-sm-6 col-lg-3 col-simple chart-pos">
-                      <DeputyPieChart />
+                      <div className="deputy-chart">
+                        <DeputyPieChart
+                          deputyVoteYes={deputyVoteYes}
+                          deputyVoteNo={deputyVoteNo}
+                          deputyVoteAbstained={deputyVoteAbstained}
+                          deputyNotVote={deputyNotVote}
+                        />
+                      </div>
+                    </div>
+                    {/* ////////////////////////////    ТАБЛИЦА РЕЗУЛЬТАТОВ ГОЛОСОВАНИЯ ДЕПУТАТОВ     ///////////////////////////// */}
+                    <div className="col-xs-6 col-sm-6 col-lg-3">
+                      <table className="table-result-voting">
+                        <tbody>
+                          <tr>
+                            <td>
+                              <div className="squ-yes"></div>
+                            </td>
+                            <td>
+                              <div id="v-yes">
+                                За: {deputyVoteYes} голосов, {deputyVoteYesPr}%
+                              </div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div className="squ-no"></div>
+                            </td>
+                            <td>
+                              <div id="v-no">
+                                Против: {deputyVoteNo} голосов, {deputyVoteNoPr}
+                                %
+                              </div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div className="squ-abs"></div>
+                            </td>
+                            <td>
+                              <div id="v-abstained">
+                                Воздержались: {deputyVoteAbstained} голосов,{" "}
+                                {deputyVoteAbstainedPr}%
+                              </div>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div className="squ-not-v"></div>
+                            </td>
+                            <td>
+                              <div id="v-not-vote">
+                                Не голосовали: {deputyNotVote} голосов,{" "}
+                                {deputyNotVotePr}%
+                              </div>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
                     </div>
                   </div>
                 </>

@@ -76,6 +76,52 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
     const selCommentsVal = [ruleId];
     const ruleComments = await pgQuery.query(selComments, selCommentsVal);
 
+    ////////////////////////////////////////////     ДИАГРАММА ГОЛОСОВАНИЯ ДЕПУТАТОВ       /////////////////////////////////////////////
+    const selDeputyVote =
+      "SELECT COUNT (*) FROM public.forseti_finaltable WHERE rule_number_final=$1 AND vote_result=$2";
+    const selDeputyVoteYesVal = [ruleNumber, "За"];
+    const deputyVoteYes = await pgQuery.query(
+      selDeputyVote,
+      selDeputyVoteYesVal
+    );
+
+    const selDeputyVoteNoVal = [ruleNumber, "Против"];
+    const deputyVoteNo = await pgQuery.query(selDeputyVote, selDeputyVoteNoVal);
+
+    const selDeputyVoteAbstVal = [ruleNumber, "Воздержался"];
+    const deputyVoteAbst = await pgQuery.query(
+      selDeputyVote,
+      selDeputyVoteAbstVal
+    );
+
+    const selDeputyNotVoteVal = [ruleNumber, "Не голосовал"];
+    const deputyNotVote = await pgQuery.query(
+      selDeputyVote,
+      selDeputyNotVoteVal
+    );
+
+    ///////////////////////////////////////////       ДИАГРАММА ГОЛОСОВАНИЯ НАРОДА      ////////////////////////////////////////////////
+    const selPopuliVote =
+      "SELECT COUNT (*) FROM public.forseti_voxpopuli WHERE rule_number=$1 AND result=$2";
+
+    const selPopuliVoteYesVal = [ruleNumber, "За"];
+    const populiVoteYes = await pgQuery.query(
+      selPopuliVote,
+      selPopuliVoteYesVal
+    );
+
+    const selPopuliVoteNoVal = [ruleNumber, "Против"];
+    const populiVoteNo = await pgQuery.query(
+      selPopuliVote,
+      selPopuliVoteNoVal
+    );
+
+    const selPopuliVoteAbstVal = [ruleNumber, "Воздержался"];
+    const populiVoteAbst = await pgQuery.query(
+      selPopuliVote,
+      selPopuliVoteAbstVal
+    );    
+
     response.status(200).send({
       oneRule: oneRule,
       currUser: currentUser,
@@ -84,6 +130,13 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
       countPrefer: countPrefer[0].count,
       countNotPrefer: countNotPrefer[0].count,
       comments: ruleComments,
+      deputyVoteYes: deputyVoteYes[0].count,
+      deputyVoteNo: deputyVoteNo[0].count,
+      deputyVoteAbst: deputyVoteAbst[0].count,
+      deputyNotVote: deputyNotVote[0].count,
+      populiVoteYes: populiVoteYes[0].count,
+      populiVoteNo: populiVoteNo[0].count,
+      populiVoteAbst: populiVoteAbst[0].count
     });
   } catch (error) {
     response.send(error);
