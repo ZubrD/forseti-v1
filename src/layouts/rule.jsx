@@ -63,6 +63,7 @@ const Rule = ({ match }) => {
   let populiVoteNoPr;
   let populiVoteAbstainedPr;
   let userVote;
+  let rejection;
 
   if (!ruleAndUserFromStore) {
     // console.log("Загрузка закона...");
@@ -115,7 +116,7 @@ const Rule = ({ match }) => {
     }
 
     userVote = ruleAndUserFromStore.userVote;
-    console.log(userVote);
+    rejection = ruleAndUserFromStore.oneRule[0].rejection;
 
     ruleAuthorArray = findedRule.author.replaceAll(",", "").split(" ");
     deputyShortName = deputy.map((item) => item.short_name); // Депутатская фамилия с инициалами
@@ -514,6 +515,7 @@ const Rule = ({ match }) => {
                       </>
                     )}
                   </div>
+                  {/* ///////////////////////////////////////   ФОРМА ГОЛОСОВАНИЯ   //////////////////////////////////////// */}
                   {deputyVoteTotal && (
                     <>
                       <div className="row">
@@ -602,7 +604,8 @@ const Rule = ({ match }) => {
                           ) : (
                             <>
                               <div style={{ textAlign: "center" }}>
-                                По этому закону Вы уже проголосовали ("{userVote}")
+                                По этому закону Вы уже проголосовали ("
+                                {userVote}")
                               </div>
                               <div className="d-flex justify-content-center">
                                 <button
@@ -619,12 +622,51 @@ const Rule = ({ match }) => {
                       </div>
                     </>
                   )}
+                  {!deputyVoteTotal && rejection && (
+                    <div className="row">
+                      <div className="col div-title">
+                        <h3>Данный закон отклонён</h3>
+                      </div>
+                    </div>
+                  )}
+                  {!deputyVoteTotal && !rejection && (
+                    <div className="row">
+                      <div className="col div-title">
+                        <h3>По этому закону ещё не проводилось голосование</h3>
+                      </div>
+                    </div>
+                  )}
                 </>
               )}
             </>
           )}
         </div>
       )}
+      <div className="container">
+        <div className="row" id="footer">
+          <div className="col">
+            <h6 id="suggestion-title">
+              Отзывы о работе сайта, его дизайне и т.д.{" "}
+            </h6>
+            <form action="{% url 'add_suggestion' %}" method="post">
+              <textarea
+                id="suggestion-textarea"
+                name="suggestion_text"
+              ></textarea>
+              <input
+                type="hidden"
+                name="suggestion_author"
+                value="{{ user.username }}"
+              />
+              <br />
+              <button type="submit" className="btn btn-success">
+                Отправить
+              </button>
+            </form>
+            <p>Дополнительная информация: партнёры, поддержка, ресурсы и т.д</p>
+          </div>
+        </div>
+      </div>
     </>
   );
 };
