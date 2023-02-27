@@ -122,6 +122,15 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
       selPopuliVoteAbstVal
     );    
 
+    //////////////////////////////   ГОЛОСОВАНИЕ ПОЛЬЗОВАТЕЛЯ   /////////////////////////////////
+
+    const selUserVote = "SELECT result FROM public.forseti_voxpopuli WHERE name=$1"
+    const selUserVoteVal = [currentUser]
+    let userVote = await pgQuery.query(selUserVote, selUserVoteVal)
+    if(userVote.length !== 0){
+      userVote = userVote[0].result
+    } else userVote = "Не голосовал"
+
     response.status(200).send({
       oneRule: oneRule,
       currUser: currentUser,
@@ -136,7 +145,8 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
       deputyNotVote: deputyNotVote[0].count,
       populiVoteYes: populiVoteYes[0].count,
       populiVoteNo: populiVoteNo[0].count,
-      populiVoteAbst: populiVoteAbst[0].count
+      populiVoteAbst: populiVoteAbst[0].count,
+      userVote: userVote
     });
   } catch (error) {
     response.send(error);
