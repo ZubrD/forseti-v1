@@ -1,12 +1,12 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2"; // Подсказки здесь https://react-chartjs-2.js.org/components/pie
 
-const DeputyPieChart = (
-  {deputyVoteYes,
+const DeputyPieChart = ({
+  deputyVoteYes,
   deputyVoteNo,
   deputyVoteAbstained,
-  deputyNotVote}
-) => {
+  deputyNotVote,
+}) => {
   ChartJS.register(ArcElement, Tooltip, Legend);
 
   const dataPie = {
@@ -33,7 +33,13 @@ const DeputyPieChart = (
       },
     },
   };
-  return <Pie data={dataPie} options={optionsPie} />;
+  return (
+    <div className="col-xs-6 col-sm-6 col-lg-3 col-simple chart-pos">
+      <div className="deputy-chart">
+        <Pie data={dataPie} options={optionsPie} />
+      </div>
+    </div>
+  );
 };
 
 export default DeputyPieChart;

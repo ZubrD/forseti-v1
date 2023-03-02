@@ -13,6 +13,12 @@ import {
 } from "../utils/likesDislikes";
 import DeputyPieChart from "../components/deputyPieChart";
 import PopuliPieChart from "../components/populiPieChart";
+import PopuliVoteTable from "../components/populiVoteTable";
+import VotingForm from "../components/votingForm";
+import DeputyVoteTable from "../components/deputyVoteTable";
+import Footer from "../components/footer";
+import VotingResults from "../components/votingResults";
+import RuleNecessity from "../components/ruleNecessity";
 
 const Rule = ({ match }) => {
   const dispatch = useDispatch();
@@ -188,6 +194,11 @@ const Rule = ({ match }) => {
     }
   }
 
+  const handleSubmitComment = (event) => {
+    event.preventDefault();
+    console.log("Отправка комментария");
+  };
+
   return (
     <>
       <NavBar />
@@ -282,55 +293,18 @@ const Rule = ({ match }) => {
           {/* //////////////////////// ВАМ ЭТОТ ЗАКОН НУЖЕН? /////////////////////////// */}
           {isLoggedIn && (
             <>
-              <div className="row">
-                <div className="col div-title" id="div-title-likes">
-                  <h3>Этот закон Вам нужен?</h3>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-6" id="div-set-likes">
-                  <button
-                    id="set-likes"
-                    className={"button-" + (necessity ? "liked" : "not-liked")}
-                    username={currentUser}
-                    rule-number={ruleNumber}
-                    liked={necessity ? "liked" : "not-liked"}
-                    onClick={handleClickNecessary}
-                  >
-                    Да
-                  </button>
-                </div>
-                <div className="col-6" id="div-set-dislikes">
-                  <button
-                    id="set-dislikes"
-                    className={
-                      "button-" + (unNecessity ? "disliked" : "not-disliked")
-                    }
-                    rule-number={ruleNumber}
-                    disliked={unNecessity ? "disliked" : "not-disliked"}
-                    onClick={handleClickUnnecessary}
-                  >
-                    Нет
-                  </button>
-                </div>
-              </div>
-              <div className="row">
-                <div className="col-6" id="div-span-likes">
-                  <p id="span-likes">{countPrefer}</p>
-                </div>
-                <div className="col-6" id="div-span-dislikes">
-                  <p id="span-dislikes">{countNotPrefer}</p>
-                </div>
-              </div>
-              {usefulness && (
-                <div className="row">
-                  <div className="col">
-                    <p id="p-usefulness" style={{ color: usefulnessColor }}>
-                      Нужность данного закона составляет {usefulness}%
-                    </p>
-                  </div>
-                </div>
-              )}
+              <RuleNecessity
+                necessity={necessity}
+                currentUser={currentUser}
+                ruleNumber={ruleNumber}
+                onClickNecessary={handleClickNecessary}
+                unNecessity={unNecessity}
+                onClickUnnecessary={handleClickUnnecessary}
+                countPrefer={countPrefer}
+                countNotPrefer={countNotPrefer}
+                usefulness={usefulness}
+                usefulnessColor={usefulnessColor}
+              />
               {/* //////////////////////////////////// ОТПРАВИТЬ КОММЕНТАРИЙ ////////////////////////////// */}
               <div className="row">
                 <div className="col">
@@ -339,7 +313,7 @@ const Rule = ({ match }) => {
               </div>
               <div className="row">
                 <div className="col">
-                  <form>
+                  <form onSubmit={handleSubmitComment}>
                     <textarea id="comment-textarea" name="text"></textarea>
                     <input
                       type="hidden"
@@ -370,258 +344,59 @@ const Rule = ({ match }) => {
               {/* ///////////////////////////////////////  ГОЛОСОВАНИЯ  ////////////////////////////////////////////// */}
               {populated && (
                 <>
-                  <div className="row">
-                    {/* Если прошло голосование и FinalTable заполнена */}
-                    <div className="col div-title">
-                      <h3>Голосование</h3>
-                    </div>
-                  </div>
-                  <div className="row" id="one_rule_result_deputy">
-                    <div className="col-6 div-title">
-                      <h4>
-                        Депутаты:{" "}
-                        <span style={{ color: resultDeputyVoteColor }}>
-                          {resultDeputyVote}
-                        </span>
-                      </h4>
-                    </div>
-                    <div className="col-6 div-title">
-                      <h4>
-                        Народ:{" "}
-                        <span style={{ color: resultPopuliVoteColor }}>
-                          {resultPopuliVote}
-                        </span>
-                      </h4>
-                    </div>
-                  </div>
+                  {/* ////////////////////////////////   РЕЗУЛЬТАТЫ ГОЛОСОВАНИЯ   ////////////////////////////////// */}
+                  <VotingResults
+                    resultDeputyVoteColor={resultDeputyVoteColor}
+                    resultDeputyVote={resultDeputyVote}
+                    resultPopuliVoteColor={resultPopuliVoteColor}
+                    resultPopuliVote={resultPopuliVote}
+                  />
                   {/* ////////////////////////   ДИАГРАММА ГОЛОСОВАНИЯ ДЕПУТАТОВ    //////////////////////////////// */}
                   <div className="row">
                     {deputyVoteTotal && (
                       <>
-                        <div className="col-xs-6 col-sm-6 col-lg-3 col-simple chart-pos">
-                          <div className="deputy-chart">
-                            <DeputyPieChart
-                              deputyVoteYes={deputyVoteYes}
-                              deputyVoteNo={deputyVoteNo}
-                              deputyVoteAbstained={deputyVoteAbstained}
-                              deputyNotVote={deputyNotVote}
-                            />
-                          </div>
-                        </div>
+                        <DeputyPieChart
+                          deputyVoteYes={deputyVoteYes}
+                          deputyVoteNo={deputyVoteNo}
+                          deputyVoteAbstained={deputyVoteAbstained}
+                          deputyNotVote={deputyNotVote}
+                        />
                         {/* ////////////////////////////    ТАБЛИЦА РЕЗУЛЬТАТОВ ГОЛОСОВАНИЯ ДЕПУТАТОВ     ///////////////////////////// */}
-                        <div className="col-xs-6 col-sm-6 col-lg-3">
-                          <table className="table-result-voting">
-                            <tbody>
-                              <tr>
-                                <td>
-                                  <div className="squ-yes"></div>
-                                </td>
-                                <td>
-                                  <div id="v-yes">
-                                    За: {deputyVoteYes} голосов,{" "}
-                                    {deputyVoteYesPr}%
-                                  </div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <div className="squ-no"></div>
-                                </td>
-                                <td>
-                                  <div id="v-no">
-                                    Против: {deputyVoteNo} голосов,{" "}
-                                    {deputyVoteNoPr}%
-                                  </div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <div className="squ-abs"></div>
-                                </td>
-                                <td>
-                                  <div id="v-abstained">
-                                    Воздержались: {deputyVoteAbstained} голосов,{" "}
-                                    {deputyVoteAbstainedPr}%
-                                  </div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <div className="squ-not-v"></div>
-                                </td>
-                                <td>
-                                  <div id="v-not-vote">
-                                    Не голосовали: {deputyNotVote} голосов,{" "}
-                                    {deputyNotVotePr}%
-                                  </div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
+                        <DeputyVoteTable
+                          deputyVoteYes={deputyVoteYes}
+                          deputyVoteYesPr={deputyVoteYesPr}
+                          deputyVoteNo={deputyVoteNo}
+                          deputyVoteNoPr={deputyVoteNoPr}
+                          deputyVoteAbstained={deputyVoteAbstained}
+                          deputyVoteAbstainedPr={deputyVoteAbstainedPr}
+                          deputyNotVote={deputyNotVote}
+                          deputyNotVotePr={deputyNotVotePr}
+                        />
                       </>
                     )}
+
                     {populiVoteTotal && (
                       <>
-                        <div className="col-xs-6 col-sm-6 col-lg-3 col-simple chart-pos">
-                          <div className="populi-chart">
-                            <PopuliPieChart
-                              populiVoteYes={populiVoteYes}
-                              populiVoteNo={populiVoteNo}
-                              populiVoteAbstained={populiVoteAbstained}
-                            />
-                          </div>
-                        </div>
-                        {/* ////////////////////////////    ТАБЛИЦА РЕЗУЛЬТАТОВ ГОЛОСОВАНИЯ ДЕПУТАТОВ     ///////////////////////////// */}
-                        <div className="col-xs-6 col-sm-6 col-lg-3">
-                          <table className="table-result-voting">
-                            <tbody>
-                              <tr>
-                                <td>
-                                  <div className="squ-yes"></div>
-                                </td>
-                                <td>
-                                  <div id="v-yes">
-                                    За: {populiVoteYes} голосов,{" "}
-                                    {populiVoteYesPr}%
-                                  </div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <div className="squ-no"></div>
-                                </td>
-                                <td>
-                                  <div id="v-no">
-                                    Против: {populiVoteNo} голосов,{" "}
-                                    {populiVoteNoPr}%
-                                  </div>
-                                </td>
-                              </tr>
-                              <tr>
-                                <td>
-                                  <div className="squ-abs"></div>
-                                </td>
-                                <td>
-                                  <div id="v-abstained">
-                                    Воздержались: {populiVoteAbstained} голосов,{" "}
-                                    {populiVoteAbstainedPr}%
-                                  </div>
-                                </td>
-                              </tr>
-                            </tbody>
-                          </table>
-                        </div>
+                        {/* ////////////////////////////////    ДИАГРАММА ГОЛОСОВАНИЯ НАРОДА    //////////////////////////////////// */}
+                        <PopuliPieChart
+                          populiVoteYes={populiVoteYes}
+                          populiVoteNo={populiVoteNo}
+                          populiVoteAbstained={populiVoteAbstained}
+                        />
+                        {/* ////////////////////////////    ТАБЛИЦА РЕЗУЛЬТАТОВ ГОЛОСОВАНИЯ НАРОДА     ///////////////////////////// */}
+                        <PopuliVoteTable
+                          populiVoteYes={populiVoteYes}
+                          populiVoteYesPr={populiVoteYesPr}
+                          populiVoteNo={populiVoteNo}
+                          populiVoteNoPr={populiVoteNoPr}
+                          populiVoteAbstained={populiVoteAbstained}
+                          populiVoteAbstainedPr={populiVoteAbstainedPr}
+                        />
                       </>
                     )}
                   </div>
                   {/* ///////////////////////////////////////   ФОРМА ГОЛОСОВАНИЯ   //////////////////////////////////////// */}
-                  {deputyVoteTotal && (
-                    <>
-                      <div className="row">
-                        <div className="col div-title">
-                          <h3>Ваше мнение по этому документу</h3>
-                        </div>
-                      </div>
-                      <div className="row">
-                        <div className="col">
-                          {userVote === "Не голосовал" ? (
-                            <form id="vote_form" method="POST">
-                              <div
-                                className="btn-group d-flex justify-content-center"
-                                role="group"
-                                aria-label="Basic radio toggle button group"
-                                id="select-vote-group"
-                              >
-                                <input
-                                  type="radio"
-                                  className="btn-check"
-                                  name="btnradio"
-                                  id="btnradio1"
-                                  autoComplete="off"
-                                  value="За"
-                                />
-                                <label
-                                  className="btn btn-outline-primary radio-font"
-                                  htmlFor="btnradio1"
-                                >
-                                  За
-                                </label>
-
-                                <input
-                                  type="radio"
-                                  className="btn-check"
-                                  name="btnradio"
-                                  id="btnradio2"
-                                  autoComplete="off"
-                                  value="Против"
-                                />
-                                <label
-                                  className="btn btn-outline-primary radio-font"
-                                  htmlFor="btnradio2"
-                                >
-                                  Против
-                                </label>
-
-                                <input
-                                  type="radio"
-                                  className="btn-check"
-                                  name="btnradio"
-                                  id="btnradio3"
-                                  autoComplete="off"
-                                  value="Воздержался"
-                                />
-                                <label
-                                  className="btn btn-outline-primary radio-font"
-                                  htmlFor="btnradio3"
-                                >
-                                  Воздержался
-                                </label>
-                              </div>
-                              <div
-                                className="col d-flex justify-content-center"
-                                id="div-send-vote"
-                              >
-                                <input
-                                  type="hidden"
-                                  name="person"
-                                  value="{{ user.username }}"
-                                />
-                                <input
-                                  type="hidden"
-                                  name="rule"
-                                  value="{{ rule.rule_number }}"
-                                />
-                                <input
-                                  type="submit"
-                                  value="Проголосовать"
-                                  id="button-send-vote"
-                                  className="btn btn-success"
-                                  disabled
-                                />
-                              </div>
-                            </form>
-                          ) : (
-                            <>
-                              <div style={{ textAlign: "center" }}>
-                                По этому закону Вы уже проголосовали ("
-                                {userVote}")
-                              </div>
-                              <div className="d-flex justify-content-center">
-                                <button
-                                  id="delete-voting"
-                                  name="{{ user.username }}"
-                                  rule-number="{{ rule.rule_number }}"
-                                >
-                                  Отменить голосование?
-                                </button>
-                              </div>
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </>
-                  )}
+                  {deputyVoteTotal && <VotingForm userVote={userVote} />}
                   {!deputyVoteTotal && rejection && (
                     <div className="row">
                       <div className="col div-title">
@@ -642,31 +417,7 @@ const Rule = ({ match }) => {
           )}
         </div>
       )}
-      <div className="container">
-        <div className="row" id="footer">
-          <div className="col">
-            <h6 id="suggestion-title">
-              Отзывы о работе сайта, его дизайне и т.д.{" "}
-            </h6>
-            <form action="{% url 'add_suggestion' %}" method="post">
-              <textarea
-                id="suggestion-textarea"
-                name="suggestion_text"
-              ></textarea>
-              <input
-                type="hidden"
-                name="suggestion_author"
-                value="{{ user.username }}"
-              />
-              <br />
-              <button type="submit" className="btn btn-success">
-                Отправить
-              </button>
-            </form>
-            <p>Дополнительная информация: партнёры, поддержка, ресурсы и т.д</p>
-          </div>
-        </div>
-      </div>
+      <Footer />
     </>
   );
 };

@@ -1,11 +1,11 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2"; // Подсказки здесь https://react-chartjs-2.js.org/components/pie
 
-const PopuliPieChart = (
-  {populiVoteYes,
+const PopuliPieChart = ({
+  populiVoteYes,
   populiVoteNo,
-  populiVoteAbstained}
-) => {
+  populiVoteAbstained,
+}) => {
   ChartJS.register(ArcElement, Tooltip, Legend);
 
   const dataPie = {
@@ -32,7 +32,13 @@ const PopuliPieChart = (
       },
     },
   };
-  return <Pie data={dataPie} options={optionsPie} />;
+  return (
+    <div className="col-xs-6 col-sm-6 col-lg-3 col-simple chart-pos">
+      <div className="populi-chart">
+        <Pie data={dataPie} options={optionsPie} />
+      </div>
+    </div>
+  );
 };
 
 export default PopuliPieChart;
