@@ -6,8 +6,10 @@ pgQuery.config(connection.connectViaPgQueries); // Соединение с ба�
 const router = express.Router({ mergeParams: true });
 
 router.get("/rules-total-list", async (request, response) => {
-  const selectRules =
-    "SELECT * FROM public.forseti_rules ORDER BY id ASC LIMIT 100";
+  // const selectRules =
+  //   "SELECT * FROM public.forseti_rules ORDER BY id ASC LIMIT 100";
+    const selectRules =
+    "SELECT title, rule_number FROM public.forseti_rules ORDER BY id ASC";
   const rulesList = await pgQuery.query(selectRules);
   response.status(200).send(rulesList);
 });

@@ -19,6 +19,7 @@ import DeputyVoteTable from "../components/deputyVoteTable";
 import Footer from "../components/footer";
 import VotingResults from "../components/votingResults";
 import RuleNecessity from "../components/ruleNecessity";
+import { loadCommentsList } from "../store/comment";
 
 const Rule = ({ match }) => {
   const dispatch = useDispatch();
@@ -29,6 +30,7 @@ const Rule = ({ match }) => {
 
   useEffect(() => {
     dispatch(loadOneRule(ruleNumber, userId));
+    dispatch(loadCommentsList(ruleNumber, userId))
   }, []);
 
   const isLoggedIn = useSelector(getIsLoggedIn());
@@ -83,6 +85,7 @@ const Rule = ({ match }) => {
     countPrefer = Number(ruleAndUserFromStore.countPrefer); // Количество лайков за закон (закон нужен)
     countNotPrefer = Number(ruleAndUserFromStore.countNotPrefer); // --- дизлайков (закон не нужен)
     comments = ruleAndUserFromStore.comments;
+    // console.log(comments)
     populated = ruleAndUserFromStore.oneRule[0].populated; // После занесения в таблицу закона результатов голосования депутатами, отдельно запускается
     // скрипт заполнения таблиы finaltable (Голосования), при этом в таблице Законы для этого закона
     // автоматически ставится отметка в поле Депутаты
