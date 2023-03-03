@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getOneRule, loadOneRule } from "../store/rule";
 import { getDeputy } from "../store/deputy";
@@ -19,7 +19,8 @@ import DeputyVoteTable from "../components/deputyVoteTable";
 import Footer from "../components/footer";
 import VotingResults from "../components/votingResults";
 import RuleNecessity from "../components/ruleNecessity";
-import { loadCommentsList } from "../store/comment";
+import { getComments, loadCommentsList } from "../store/comment";
+import { modifyDate } from "../utils/modifyDate";
 
 const Rule = ({ match }) => {
   const dispatch = useDispatch();
@@ -27,11 +28,56 @@ const Rule = ({ match }) => {
   const ruleNumber = match.params.ruleNumber;
   const ruleAndUserFromStore = useSelector(getOneRule());
   const deputy = useSelector(getDeputy());
+  const comments = useSelector(getComments());
+  const monthsArray = [
+    "января",
+    "февраля",
+    "марта",
+    "апреля",
+    "мая",
+    "июня",
+    "июля",
+    "августа",
+    "сентября",
+    "октября",
+    "ноября",
+    "декабря",
+  ];
+
+  // console.log(comments);
+  let modifiedComments;
+  if (comments) {                               // В массиве комментариев заменяю дату на удобоваримую
+    modifiedComments = comments.map((item) => {
+      return {
+        id: item.id,
+        name: item.name,
+        text: item.text,
+        rule_id: item.rule_id,
+        date1: modifyDate(item.date1),
+      };
+    });
+  }
+
+  const [newComment, setNewComment] = useState({
+    comment: "",
+    author: "",
+  });
 
   useEffect(() => {
     dispatch(loadOneRule(ruleNumber, userId));
-    dispatch(loadCommentsList(ruleNumber, userId))
+    dispatch(loadCommentsList(ruleNumber, userId));
   }, []);
+
+  const handleChangeComment = (event) => {
+    const commentText = event.target.value;
+    const commentAuthor = event.target.attributes["author"].value;
+    setNewComment((prevState) => ({
+      ...prevState,
+      comment: commentText,
+      author: commentAuthor,
+    }));
+  };
+  console.log(newComment)
 
   const isLoggedIn = useSelector(getIsLoggedIn());
 
@@ -48,7 +94,6 @@ const Rule = ({ match }) => {
   let countNotPrefer;
   let usefulness = 0;
   let usefulnessColor = "";
-  let comments;
   let populated;
   let resultDeputyVote;
   let resultPopuliVote;
@@ -84,8 +129,6 @@ const Rule = ({ match }) => {
     unNecessity = ruleAndUserFromStore.notPrefer;
     countPrefer = Number(ruleAndUserFromStore.countPrefer); // Количество лайков за закон (закон нужен)
     countNotPrefer = Number(ruleAndUserFromStore.countNotPrefer); // --- дизлайков (закон не нужен)
-    comments = ruleAndUserFromStore.comments;
-    // console.log(comments)
     populated = ruleAndUserFromStore.oneRule[0].populated; // После занесения в таблицу закона результатов голосования депутатами, отдельно запускается
     // скрипт заполнения таблиы finaltable (Голосования), при этом в таблице Законы для этого закона
     // автоматически ставится отметка в поле Депутаты
@@ -133,20 +176,7 @@ const Rule = ({ match }) => {
     initialisationDate = new Date(findedRule.initialization_date);
     const initYear = initialisationDate.getFullYear();
     const initDay = initialisationDate.getDate();
-    const monthsArray = [
-      "января",
-      "февраля",
-      "марта",
-      "апреля",
-      "мая",
-      "июня",
-      "июля",
-      "августа",
-      "сентября",
-      "октября",
-      "ноября",
-      "декабря",
-    ];
+
     const initMonth = monthsArray[initialisationDate.getMonth()];
     initialisationDateString = initDay + " " + initMonth + " " + initYear;
 
@@ -207,7 +237,7 @@ const Rule = ({ match }) => {
       <NavBar />
       {findedRule && (
         <div className="container">
-          <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+          {/* <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script> */}
           <div className="row">
             <div className="col offset-9" id="div-visits">
               Количество просмотров: {findedRule.visits}
@@ -317,7 +347,12 @@ const Rule = ({ match }) => {
               <div className="row">
                 <div className="col">
                   <form onSubmit={handleSubmitComment}>
-                    <textarea id="comment-textarea" name="text"></textarea>
+                    <textarea
+                      id="comment-textarea"
+                      name="comm"
+                      author={currentUser} /* через dataset не работает */
+                      onChange={handleChangeComment}
+                    ></textarea>
                     <input
                       type="hidden"
                       name="name"
@@ -331,19 +366,24 @@ const Rule = ({ match }) => {
                 </div>
               </div>
               {/* //////////////////////////////////// АККОРДЕОН КОММЕНТАРИЕВ //////////////////////////////////////// */}
-              <div className="row">
-                <MDBAccordion>
-                  <MDBAccordionItem collapseId={1} headerTitle="Комментарии">
-                    {comments.map((comment) => (
-                      <div key={nanoid()}>
-                        <span className="text-bold">{comment.name} </span>
-                        <span className="text-italic">от {comment.date1}</span>
-                        <p className="text-comment">{comment.text}</p>
-                      </div>
-                    ))}
-                  </MDBAccordionItem>
-                </MDBAccordion>
-              </div>
+              {modifiedComments && (
+                <div className="row">
+                  <MDBAccordion>
+                    <MDBAccordionItem collapseId={1} headerTitle="Комментарии">
+                      {modifiedComments.map((comment) => (
+                        <div key={nanoid()}>
+                          <span className="text-bold">{comment.name} </span>
+                          <span className="text-italic">
+                            от {comment.date1}
+                          </span>
+                          <p className="text-comment">{comment.text}</p>
+                        </div>
+                      ))}
+                    </MDBAccordionItem>
+                  </MDBAccordion>
+                </div>
+              )}
+
               {/* ///////////////////////////////////////  ГОЛОСОВАНИЯ  ////////////////////////////////////////////// */}
               {populated && (
                 <>

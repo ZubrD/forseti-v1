@@ -27,16 +27,17 @@ const { reducer: commentReducer, actions } = commentSlice;
 
 const { commentRequested, commentReceived, commentRequestFailed } = actions;
 
-export const loadCommentsList = (ruleNumber, userId) => async (dispatch) => {
+export const loadCommentsList = (ruleNumber) => async (dispatch) => {
   dispatch(commentRequested());
 
   try {
     const commentsData = await commentService.getComments(ruleNumber); // Получение с сервера данных по законам
-    console.log(commentsData);
     dispatch(commentReceived(commentsData));
   } catch (error) {
     dispatch(commentRequestFailed(error));
   }
 };
+
+export const getComments=()=>(state)=> state.comments.entities
 
 export default commentReducer;
