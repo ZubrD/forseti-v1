@@ -45,7 +45,7 @@ export const createComment = (comment) => async (dispatch, getState) => {
   const commentsList = getState().comments.entities;
   const commentsListUpdated = [...commentsList];
   try {
-      // const { content } = await commentService.createComment(comment);
+      const { content } = await commentService.addComment(comment);
       commentsListUpdated.push(comment);
       dispatch(commentsUpdated(commentsListUpdated));
   } catch (error) {

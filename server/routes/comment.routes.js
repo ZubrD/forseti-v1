@@ -24,11 +24,11 @@ router.get("/:ruleNumber", async (request, response)=>{
 })
 
 router.post("/add", async (request, response) => {
-    const {comment, username} = request.body;
+    const {text, name} = request.body;
     const ruleId = "21";
     const insertComment =
       "INSERT INTO public.forseti_comments (name, text, rule_id) VALUES ($1, $2, $3)";
-    const insertCommentVal = [username, comment, ruleId];
+    const insertCommentVal = [name, text, ruleId];
     try {
       await pgQuery.query(insertComment, insertCommentVal);
       response.status(200).send("Комментарий отправлен");

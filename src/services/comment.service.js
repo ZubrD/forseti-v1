@@ -10,6 +10,10 @@ const commentService = {
     const {data} = await httpComment.get(`/${num}`)
     return data
   },
+  addComment: async(commentData)=>{
+    const {data} = await httpComment.post("/add", commentData)
+    return data
+  }
 
 };
 
