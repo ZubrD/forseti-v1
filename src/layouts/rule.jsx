@@ -19,7 +19,7 @@ import DeputyVoteTable from "../components/deputyVoteTable";
 import Footer from "../components/footer";
 import VotingResults from "../components/votingResults";
 import RuleNecessity from "../components/ruleNecessity";
-import { getComments, loadCommentsList } from "../store/comment";
+import { createComment, getComments, loadCommentsList } from "../store/comment";
 import { modifyDate } from "../utils/modifyDate";
 
 const Rule = ({ match }) => {
@@ -59,8 +59,9 @@ const Rule = ({ match }) => {
   }
 
   const [newComment, setNewComment] = useState({
-    comment: "",
-    author: "",
+    text: "",
+    name: "",
+    date1: ""
   });
 
   useEffect(() => {
@@ -73,11 +74,19 @@ const Rule = ({ match }) => {
     const commentAuthor = event.target.attributes["author"].value;
     setNewComment((prevState) => ({
       ...prevState,
-      comment: commentText,
-      author: commentAuthor,
+      text: commentText,
+      name: commentAuthor,
+      date1: Date.now() 
     }));
   };
-  console.log(newComment)
+  // console.log(newComment)
+  // console.log(new Date(newComment.date1))
+
+  const handleSubmitComment = (event) => {
+    event.preventDefault();
+    console.log(newComment);
+    dispatch(createComment(newComment))
+  };
 
   const isLoggedIn = useSelector(getIsLoggedIn());
 
@@ -227,10 +236,7 @@ const Rule = ({ match }) => {
     }
   }
 
-  const handleSubmitComment = (event) => {
-    event.preventDefault();
-    console.log("Отправка комментария");
-  };
+
 
   return (
     <>

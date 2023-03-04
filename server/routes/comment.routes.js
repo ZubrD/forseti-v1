@@ -14,7 +14,7 @@ router.get("/:ruleNumber", async (request, response)=>{
     const ruleId = await pgQuery.query(selRuleId, selRuleIdVal)
     const ruleIdInt = ruleId[0].id
 
-    const selComm = "SELECT * FROM public.forseti_comments WHERE rule_id=$1"
+    const selComm = "SELECT name, text, date1 FROM public.forseti_comments WHERE rule_id=$1"
     const selCommVal = [ruleIdInt]
     const comments = await pgQuery.query(selComm, selCommVal)
     response.status(200).send(comments)

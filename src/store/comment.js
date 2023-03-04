@@ -20,12 +20,15 @@ const commentSlice = createSlice({
       state.error = action.payload;
       state.isLoading = false;
     },
+    commentsUpdated: (state, action) => {
+      state.entities = action.payload;
+  }
   },
 });
 
 const { reducer: commentReducer, actions } = commentSlice;
 
-const { commentRequested, commentReceived, commentRequestFailed } = actions;
+const { commentRequested, commentReceived, commentRequestFailed, commentsUpdated } = actions;
 
 export const loadCommentsList = (ruleNumber) => async (dispatch) => {
   dispatch(commentRequested());
@@ -35,6 +38,18 @@ export const loadCommentsList = (ruleNumber) => async (dispatch) => {
     dispatch(commentReceived(commentsData));
   } catch (error) {
     dispatch(commentRequestFailed(error));
+  }
+};
+
+export const createComment = (comment) => async (dispatch, getState) => {
+  const commentsList = getState().comments.entities;
+  const commentsListUpdated = [...commentsList];
+  try {
+      // const { content } = await commentService.createComment(comment);
+      commentsListUpdated.push(comment);
+      dispatch(commentsUpdated(commentsListUpdated));
+  } catch (error) {
+      console.log(error);
   }
 };
 
