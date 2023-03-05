@@ -36,6 +36,7 @@ const RuleNecessity = ({
           <button
             id="set-dislikes"
             className={"button-" + (unNecessity ? "disliked" : "not-disliked")}
+            username={currentUser}
             rule-number={ruleNumber}
             disliked={unNecessity ? "disliked" : "not-disliked"}
             onClick={onClickUnnecessary}

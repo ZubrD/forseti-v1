@@ -17,7 +17,23 @@ const ruleService = {
   getPrefer: async(num)=>{
     const {data} = await httpRule.get(`/prefer/${num}`)
     return data
-  }
+  },
+  setPrefer: async(num, user)=>{
+    const preferData = {num, user}
+    await httpRule.post(`/setPrefer`, preferData)
+  },
+  unSetPrefer: async(num, user)=>{
+    const preferData = {num, user}
+    await httpRule.post(`/unSetPrefer`, preferData)
+  },  
+  setNotPrefer: async(num, user)=>{
+    const preferData = {num, user}
+    await httpRule.post(`/setNotPrefer`, preferData)
+  },  
+  unSetNotPrefer: async(num, user)=>{
+    const preferData = {num, user}
+    await httpRule.post(`/unSetNotPrefer`, preferData)
+  },   
 };
 
 export default ruleService;

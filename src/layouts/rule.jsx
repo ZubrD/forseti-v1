@@ -44,7 +44,6 @@ const Rule = ({ match }) => {
     "декабря",
   ];
 
-  // console.log(comments);
   let modifiedComments;
   if (comments) {                               // В массиве комментариев заменяю дату на удобоваримую
     modifiedComments = comments.map((item) => {
@@ -61,7 +60,8 @@ const Rule = ({ match }) => {
   const [newComment, setNewComment] = useState({
     text: "",
     name: "",
-    date1: ""
+    date1: "",
+    rule_id: ""
   });
 
   useEffect(() => {
@@ -71,11 +71,13 @@ const Rule = ({ match }) => {
 
   const handleChangeComment = (event) => {
     const commentText = event.target.value;
-    const commentAuthor = event.target.attributes["author"].value;
+    const commentAuthor = event.target.attributes["author"].value;  // запрос к значению атрибут можно сделать и так 
+    const commentRuleId = event.target.getAttribute("rule-id")      // и так
     setNewComment((prevState) => ({
       ...prevState,
       text: commentText,
       name: commentAuthor,
+      rule_id: commentRuleId,
       date1: Date.now() 
     }));
   };
@@ -84,8 +86,10 @@ const Rule = ({ match }) => {
 
   const handleSubmitComment = (event) => {
     event.preventDefault();
-    console.log(newComment);
+    // console.log(newComment);
+    const commentTextarea = document.getElementById("comment-textarea")
     dispatch(createComment(newComment))
+    commentTextarea.value=""
   };
 
   const isLoggedIn = useSelector(getIsLoggedIn());
@@ -211,7 +215,7 @@ const Rule = ({ match }) => {
       usefulness = Math.round(
         (countPrefer / (countPrefer + countNotPrefer)) * 100
       );
-      if (usefulness > 50) {
+      if (usefulness > 49) {
         usefulnessColor = "green";
       }
       if (usefulness < 50) {
@@ -357,6 +361,7 @@ const Rule = ({ match }) => {
                       id="comment-textarea"
                       name="comm"
                       author={currentUser} /* через dataset не работает */
+                      rule-id={comments[0].rule_id}
                       onChange={handleChangeComment}
                     ></textarea>
                     <input

@@ -11,6 +11,7 @@ const commentService = {
     return data
   },
   addComment: async(commentData)=>{
+    console.log(commentData)
     const {data} = await httpComment.post("/add", commentData)
     return data
   }

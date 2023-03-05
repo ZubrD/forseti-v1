@@ -24,6 +24,78 @@ router.get("/prefer/:ruleNumber", async (request, response) => {
   response.status(200).send(countPrefer);
 });
 
+router.post("/setPrefer", async(request, response)=>{
+  const {num, user} = request.body
+  const insPref = "INSERT INTO public.forseti_prefer (person, rule) VALUES ($1, $2)"
+  const insPrefVal = [user, num]
+  try{
+    await pgQuery.query(insPref, insPrefVal)
+    response.status(200).send('Вы проголосовали за нужность закона')
+  } catch(error){
+    console.log(error)
+    return response.status(400).send({
+      error: {
+        message: "Ошибка при голосовании за нужность закона",
+        code: 499,
+      },
+    });
+  }
+})
+
+router.post("/unSetPrefer", async(request, response)=>{
+  const {num, user} = request.body
+  const delPref = "DELETE FROM public.forseti_prefer WHERE person=$1 AND rule=$2"
+  const delPrefVal = [user, num]
+  try{
+    await pgQuery.query(delPref, delPrefVal)
+    response.status(200).send('Вы отменили голосование за нужность закона')
+  } catch(error){
+    console.log(error)
+    return response.status(400).send({
+      error: {
+        message: "Ошибка при отмене голосования за нужность закона",
+        code: 499,
+      },
+    });
+  }
+})
+
+router.post("/setNotPrefer", async(request, response)=>{
+  const {num, user} = request.body
+  const insNotPref = "INSERT INTO public.forseti_notprefer (person, rule) VALUES ($1, $2)"
+  const insNotPrefVal = [user, num]
+  try{
+    await pgQuery.query(insNotPref, insNotPrefVal)
+    response.status(200).send('Вы проголосовали за НЕнужность закона')
+  } catch(error){
+    console.log(error)
+    return response.status(400).send({
+      error: {
+        message: "Ошибка при голосовании за НЕнужность закона",
+        code: 499,
+      },
+    });
+  }
+})
+
+router.post("/unSetNotPrefer", async(request, response)=>{
+  const {num, user} = request.body
+  const delUnPref = "DELETE FROM public.forseti_notprefer WHERE person=$1 AND rule=$2"
+  const delUnPrefVal = [user, num]
+  try{
+    await pgQuery.query(delUnPref, delUnPrefVal)
+    response.status(200).send('Вы отменили голосование за НЕнужность закона')
+  } catch(error){
+    console.log(error)
+    return response.status(400).send({
+      error: {
+        message: "Ошибка при отмене голосования за НЕнужность закона",
+        code: 499,
+      },
+    });
+  }
+})
+
 router.get("/:ruleNumber/:userId", async (request, response) => {
   try {
     const { ruleNumber, userId } = request.params;
