@@ -1,6 +1,12 @@
 import React from "react";
+import { ButtonGroup, Button } from "react-bootstrap";
+import ToggleButtonExample from "./toggleButtonExample";
 
-const VotingForm = ({userVote}) => {
+const VotingForm = ({ userVote }) => {
+  const handleClick = (event) => {
+    console.log(event.target.value);
+  };
+
   return (
     <>
       <div className="row">
@@ -9,6 +15,10 @@ const VotingForm = ({userVote}) => {
         </div>
       </div>
       <div className="row">
+        <ToggleButtonExample />
+      </div>
+
+      {/* <div className="row">
         <div className="col">
           {userVote === "Не голосовал" ? (
             <form id="vote_form" method="POST">
@@ -104,7 +114,7 @@ const VotingForm = ({userVote}) => {
             </>
           )}
         </div>
-      </div>
+      </div> */}
     </>
   );
 };
