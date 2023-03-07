@@ -28,7 +28,7 @@ function ToggleButtonExample() {
     <>
       <ButtonGroup className="btn-group d-flex justify-content-center">
         <ToggleButton
-          className="fs-3"
+          className="fs-3 mt-5 mb-5"
           key="1"
           id="radio-1"
           variant={yes ? "success" : "outline-success"}
@@ -39,7 +39,7 @@ function ToggleButtonExample() {
           За
         </ToggleButton>
         <ToggleButton
-          className="fs-3"
+          className="fs-3 mt-5 mb-5"
           key="2"
           id={`radio-2`}
           variant={no ? "danger" : "outline-danger"}
@@ -49,7 +49,7 @@ function ToggleButtonExample() {
           Против
         </ToggleButton>
         <ToggleButton
-          className="fs-3"
+          className="fs-3 mt-5 mb-5"
           key="3"
           id={`radio-3`}
           variant={abstained ? "info" : "outline-info"}

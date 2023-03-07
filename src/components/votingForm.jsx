@@ -6,6 +6,7 @@ const VotingForm = ({ userVote }) => {
   const handleClick = (event) => {
     console.log(event.target.value);
   };
+  console.log(userVote);
 
   return (
     <>
@@ -15,87 +16,19 @@ const VotingForm = ({ userVote }) => {
         </div>
       </div>
       <div className="row">
-        <ToggleButtonExample />
-      </div>
-
-      {/* <div className="row">
         <div className="col">
           {userVote === "Не голосовал" ? (
-            <form id="vote_form" method="POST">
+            <>
+              <ToggleButtonExample />
               <div
-                className="btn-group d-flex justify-content-center"
-                role="group"
-                aria-label="Basic radio toggle button group"
-                id="select-vote-group"
-              >
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="btnradio"
-                  id="btnradio1"
-                  autoComplete="off"
-                  value="За"
-                />
-                <label
-                  className="btn btn-outline-primary radio-font"
-                  htmlFor="btnradio1"
-                >
-                  За
-                </label>
-
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="btnradio"
-                  id="btnradio2"
-                  autoComplete="off"
-                  value="Против"
-                />
-                <label
-                  className="btn btn-outline-primary radio-font"
-                  htmlFor="btnradio2"
-                >
-                  Против
-                </label>
-
-                <input
-                  type="radio"
-                  className="btn-check"
-                  name="btnradio"
-                  id="btnradio3"
-                  autoComplete="off"
-                  value="Воздержался"
-                />
-                <label
-                  className="btn btn-outline-primary radio-font"
-                  htmlFor="btnradio3"
-                >
-                  Воздержался
-                </label>
-              </div>
-              <div
-                className="col d-flex justify-content-center"
+                className="col d-flex justify-content-center pt-3 pb-3"
                 id="div-send-vote"
               >
-                <input
-                  type="hidden"
-                  name="person"
-                  value="{{ user.username }}"
-                />
-                <input
-                  type="hidden"
-                  name="rule"
-                  value="{{ rule.rule_number }}"
-                />
-                <input
-                  type="submit"
-                  value="Проголосовать"
-                  id="button-send-vote"
-                  className="btn btn-success"
-                  disabled
-                />
+                <button className="btn btn-success btn-lg fs-3">
+                  Проголосовать
+                </button>
               </div>
-            </form>
+            </>
           ) : (
             <>
               <div style={{ textAlign: "center" }}>
@@ -114,7 +47,7 @@ const VotingForm = ({ userVote }) => {
             </>
           )}
         </div>
-      </div> */}
+      </div>
     </>
   );
 };
