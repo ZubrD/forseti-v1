@@ -34,6 +34,14 @@ const ruleService = {
     const preferData = {num, user}
     await httpRule.post(`/unSetNotPrefer`, preferData)
   },   
+  setUserVote: async(result, user, ruleNumber)=>{
+    const voteData = {result, user, ruleNumber}
+    await httpRule.post("/setUserVote", voteData)
+  },
+  discardUserVote: async(user, ruleNumber)=>{
+    const voteData = {user, ruleNumber}
+    await httpRule.post("/discardUserVote", voteData)
+  }
 };
 
 export default ruleService;

@@ -96,6 +96,44 @@ router.post("/unSetNotPrefer", async(request, response)=>{
   }
 })
 
+router.post("/setUserVote", async(request, response)=>{
+  const {result, user, ruleNumber} = request.body
+  const insVote = "INSERT INTO public.forseti_voxpopuli (name, rule_number, result) VALUES ($1, $2, $3)"
+  const insVoteVal = [user, ruleNumber, result]
+
+  try{
+    await pgQuery.query(insVote, insVoteVal)
+    response.status(200).send("Добавлено")
+  } catch(error){
+    console.log(error)
+    return response.status(400).send({
+      error: {
+        message: "Ошибка при голосовании за закон",
+        code: 499,
+      },
+    });
+  }
+})
+
+router.post("/discardUserVote", async(request, response)=>{
+  const {user, ruleNumber} = request.body
+  const delVote = "DELETE FROM public.forseti_voxpopuli WHERE name=$1 AND rule_number=$2"
+  const delVoteVal = [user, ruleNumber]
+
+  try{
+    await pgQuery.query(delVote, delVoteVal)
+    response.status(200).send("Удалено")
+  } catch(error){
+    console.log(error)
+    return response.status(400).send({
+      error: {
+        message: "Ошибка при удалении голосования за закон",
+        code: 499,
+      },
+    });
+  }
+})
+
 router.get("/:ruleNumber/:userId", async (request, response) => {
   try {
     const { ruleNumber, userId } = request.params;

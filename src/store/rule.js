@@ -33,6 +33,9 @@ const ruleSlice = createSlice({
       state.ruleLoading = false;
       state.error = action.payload;
     },
+    setUserVote: (state, action) => {
+      state.rule = action.payload;
+    },
   },
 });
 
@@ -45,6 +48,7 @@ const {
   oneRuleRequested,
   oneRuleReceived,
   oneRuleRequetFailed,
+  setUserVote,
 } = actions;
 
 export const loadRuleList = () => async (dispatch) => {
@@ -68,6 +72,22 @@ export const loadOneRule = (ruleNumber, userId) => async (dispatch) => {
   }
 };
 
+export const userVoting = (resultVote, currentUser, ruleNumber) => async (dispatch, getState) => { // Изменение статуса голосования пользователя за закон
+  const ruleList = getState().rules.rule;
+  const ruleListClone = { ...ruleList, userVote: resultVote };  
+
+  try{
+    if(resultVote !== "Не голосовал"){
+      await ruleService.setUserVote(resultVote, currentUser, ruleNumber)
+    } else {
+      await ruleService.discardUserVote(currentUser, ruleNumber)
+    }
+    dispatch(setUserVote(ruleListClone));
+  } catch(error){
+    console.log(error)
+  }
+  // console.log(currentUser, resultVote);
+};
 
 export const getRule = () => (state) => state.rules.entities;
 export const getOneRule = () => (state) => state.rules.rule;

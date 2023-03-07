@@ -450,7 +450,7 @@ const Rule = ({ match }) => {
                     )}
                   </div>
                   {/* ///////////////////////////////////////   ФОРМА ГОЛОСОВАНИЯ   //////////////////////////////////////// */}
-                  {deputyVoteTotal && <VotingForm userVote={userVote} />}
+                  {deputyVoteTotal && <VotingForm userVote={userVote} currentUser={currentUser} ruleNumber={ruleNumber} />}
                   {!deputyVoteTotal && rejection && (
                     <div className="row">
                       <div className="col div-title">

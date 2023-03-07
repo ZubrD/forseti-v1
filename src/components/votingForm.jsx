@@ -1,12 +1,47 @@
-import React from "react";
-import { ButtonGroup, Button } from "react-bootstrap";
-import ToggleButtonExample from "./toggleButtonExample";
+import React, { useState } from "react";
+import ToggleButtonVote from "./toggleButtonVote";
+import { userVoting } from "../store/rule";
+import { useDispatch } from "react-redux";
+import ButtonSendResultVote from "./buttonSendResultVote";
 
-const VotingForm = ({ userVote }) => {
-  const handleClick = (event) => {
-    console.log(event.target.value);
+const VotingForm = ({ userVote, currentUser, ruleNumber }) => {
+  const dispatch = useDispatch();
+  const [yes, setYes] = useState(false);
+  const [no, setNo] = useState(false);
+  const [abstained, setAbstained] = useState(false);
+  const [resultVote, setResultVote] = useState();
+  const [buttonDisabled, setButtonDisabled] = useState(true)
+
+  const handleVoteClick = (event) => {
+    const labelFor = event.target.htmlFor;
+    const radioInput = document.querySelector(`#${labelFor}`);
+
+    if (radioInput.id === "yes-vote") {
+      setYes((prevState) => !prevState);
+      setNo(false);
+      setAbstained(false);
+      setResultVote("За");
+    } else if (radioInput.id === "no-vote") {
+      setNo((prevState) => !prevState);
+      setYes(false);
+      setAbstained(false);
+      setResultVote("Против");
+    } else if (radioInput.id === "abstained-vote") {
+      setAbstained((prevState) => !prevState);
+      setYes(false);
+      setNo(false);
+      setResultVote("Воздержался");
+    }
   };
-  console.log(userVote);
+
+  const handleResultVote = () => {
+    dispatch(userVoting(resultVote, currentUser, ruleNumber));
+  };
+
+  const handleDiscardVote = () => {
+    const resultVote = "Не голосовал";
+    dispatch(userVoting(resultVote, currentUser, ruleNumber));
+  };
 
   return (
     <>
@@ -19,15 +54,13 @@ const VotingForm = ({ userVote }) => {
         <div className="col">
           {userVote === "Не голосовал" ? (
             <>
-              <ToggleButtonExample />
-              <div
-                className="col d-flex justify-content-center pt-3 pb-3"
-                id="div-send-vote"
-              >
-                <button className="btn btn-success btn-lg fs-3">
-                  Проголосовать
-                </button>
-              </div>
+              <ToggleButtonVote
+                onVoteClick={handleVoteClick}
+                yes={yes}
+                no={no}
+                abstained={abstained}
+              />
+              <ButtonSendResultVote onClick={handleResultVote} yes={yes} no={no} abstained={abstained}/>
             </>
           ) : (
             <>
@@ -37,9 +70,11 @@ const VotingForm = ({ userVote }) => {
               </div>
               <div className="d-flex justify-content-center">
                 <button
+                  className="btn btn-danger"
                   id="delete-voting"
                   name="{{ user.username }}"
                   rule-number="{{ rule.rule_number }}"
+                  onClick={handleDiscardVote}
                 >
                   Отменить голосование?
                 </button>
