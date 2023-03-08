@@ -134,6 +134,24 @@ router.post("/discardUserVote", async(request, response)=>{
   }
 })
 
+router.post("/addSuggestion", async(request, response)=>{
+  const {text, name} = request.body
+  const insSug = "INSERT INTO public.forseti_suggestions (author, text) VALUES ($1, $2)"
+  const insSugVal = [name, text]
+  try{
+    await pgQuery.query(insSug, insSugVal)
+    response.status(200).send("Предложение отправлено")
+  } catch(error){
+    console.log(error)
+    return response.status(400).send({
+      error: {
+        message: "Ошибка при добавлении предложения",
+        code: 499,
+      },
+    });
+  }
+})
+
 router.get("/:ruleNumber/:userId", async (request, response) => {
   try {
     const { ruleNumber, userId } = request.params;

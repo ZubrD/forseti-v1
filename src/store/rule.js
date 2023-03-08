@@ -139,6 +139,14 @@ export const userVoting =
     }
   };
 
+  export const createSuggestion=(suggestion)=> async(dispatch)=>{
+    try{
+      const suggContent = await ruleService.addSuggestion(suggestion)
+    } catch (error){
+      console.log(error)
+    }
+  }
+
 export const getRule = () => (state) => state.rules.entities;
 export const getOneRule = () => (state) => state.rules.rule;
 

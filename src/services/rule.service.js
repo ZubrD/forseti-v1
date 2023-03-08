@@ -41,6 +41,10 @@ const ruleService = {
   discardUserVote: async(user, ruleNumber)=>{
     const voteData = {user, ruleNumber}
     await httpRule.post("/discardUserVote", voteData)
+  },
+  addSuggestion: async(suggestionData)=>{
+    // console.log(suggestionData)
+    await httpRule.post("/addSuggestion", suggestionData)
   }
 };
 

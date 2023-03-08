@@ -81,12 +81,9 @@ const Rule = ({ match }) => {
       date1: Date.now() 
     }));
   };
-  // console.log(newComment)
-  // console.log(new Date(newComment.date1))
 
   const handleSubmitComment = (event) => {
     event.preventDefault();
-    // console.log(newComment);
     const commentTextarea = document.getElementById("comment-textarea")
     dispatch(createComment(newComment))
     commentTextarea.value=""
@@ -471,7 +468,7 @@ const Rule = ({ match }) => {
           )}
         </div>
       )}
-      <Footer />
+      <Footer currentUser={currentUser} />
     </>
   );
 };
