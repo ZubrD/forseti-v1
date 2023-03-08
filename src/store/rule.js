@@ -72,22 +72,72 @@ export const loadOneRule = (ruleNumber, userId) => async (dispatch) => {
   }
 };
 
-export const userVoting = (resultVote, currentUser, ruleNumber) => async (dispatch, getState) => { // Изменение статуса голосования пользователя за закон
-  const ruleList = getState().rules.rule;
-  const ruleListClone = { ...ruleList, userVote: resultVote };  
+export const userVoting =
+  (resultVote, currentUser, ruleNumber) => async (dispatch, getState) => {
+    // Изменение статуса голосования пользователя за закон
+    const ruleList = getState().rules.rule;
 
-  try{
-    if(resultVote !== "Не голосовал"){
-      await ruleService.setUserVote(resultVote, currentUser, ruleNumber)
-    } else {
-      await ruleService.discardUserVote(currentUser, ruleNumber)
+    const voteYes = Number(ruleList.populiVoteYes);
+    const voteNo = Number(ruleList.populiVoteNo);
+    const voteAbstained = Number(ruleList.populiVoteAbst);
+    try {
+      if (resultVote !== "Не голосовал") {
+        await ruleService.setUserVote(resultVote, currentUser, ruleNumber);
+        if (resultVote === "За") {                // Все блоки if нужны для ДОБАВЛЕНИЯ  ...
+          const ruleListClone = {
+            ...ruleList,
+            userVote: resultVote,
+            populiVoteYes: voteYes + 1,
+          };
+          dispatch(setUserVote(ruleListClone));
+        }
+        if (resultVote === "Против") {            // ... выбора пользователя ...
+          const ruleListClone = {
+            ...ruleList,
+            userVote: resultVote,
+            populiVoteNo: voteNo + 1,
+          };
+          dispatch(setUserVote(ruleListClone));
+        }
+        if (resultVote === "Воздержался") {       // ... на диаграмму народного голосования
+          const ruleListClone = {
+            ...ruleList,
+            userVote: resultVote,
+            populiVoteAbst: voteAbstained + 1,
+          };
+          dispatch(setUserVote(ruleListClone));
+        }
+      } else {
+        await ruleService.discardUserVote(currentUser, ruleNumber);
+        if (ruleList.userVote === "За") {         // Эти блоки if нужны для отображения ИСКЛЮЧЕНИЯ ...
+          const ruleListClone = {
+            ...ruleList,
+            userVote: resultVote,
+            populiVoteYes: voteYes - 1,
+          };
+          dispatch(setUserVote(ruleListClone));
+        }
+        if (ruleList.userVote === "Против") {     // выбора пользователи из диаграмммы народного голосования
+          const ruleListClone = {
+            ...ruleList,
+            userVote: resultVote,
+            populiVoteNo: voteNo - 1,
+          };
+          dispatch(setUserVote(ruleListClone));
+        }
+        if (ruleList.userVote === "Воздержался") { // ... 
+          const ruleListClone = {
+            ...ruleList,
+            userVote: resultVote,
+            populiVoteAbst: voteAbstained - 1,
+          };
+          dispatch(setUserVote(ruleListClone));
+        }
+      }
+    } catch (error) {
+      console.log(error);
     }
-    dispatch(setUserVote(ruleListClone));
-  } catch(error){
-    console.log(error)
-  }
-  // console.log(currentUser, resultVote);
-};
+  };
 
 export const getRule = () => (state) => state.rules.entities;
 export const getOneRule = () => (state) => state.rules.rule;
