@@ -8,7 +8,7 @@ const router = express.Router({ mergeParams: true });
 router.get("/rules-total-list", async (request, response) => {
   // const selectRules =
   //   "SELECT * FROM public.forseti_rules ORDER BY id ASC LIMIT 100";
-    const selectRules =
+  const selectRules =
     "SELECT title, rule_number FROM public.forseti_rules ORDER BY id ASC";
   const rulesList = await pgQuery.query(selectRules);
   response.status(200).send(rulesList);
@@ -24,15 +24,16 @@ router.get("/prefer/:ruleNumber", async (request, response) => {
   response.status(200).send(countPrefer);
 });
 
-router.post("/setPrefer", async(request, response)=>{
-  const {num, user} = request.body
-  const insPref = "INSERT INTO public.forseti_prefer (person, rule) VALUES ($1, $2)"
-  const insPrefVal = [user, num]
-  try{
-    await pgQuery.query(insPref, insPrefVal)
-    response.status(200).send('Вы проголосовали за нужность закона')
-  } catch(error){
-    console.log(error)
+router.post("/setPrefer", async (request, response) => {
+  const { num, user } = request.body;
+  const insPref =
+    "INSERT INTO public.forseti_prefer (person, rule) VALUES ($1, $2)";
+  const insPrefVal = [user, num];
+  try {
+    await pgQuery.query(insPref, insPrefVal);
+    response.status(200).send("Вы проголосовали за нужность закона");
+  } catch (error) {
+    console.log(error);
     return response.status(400).send({
       error: {
         message: "Ошибка при голосовании за нужность закона",
@@ -40,17 +41,18 @@ router.post("/setPrefer", async(request, response)=>{
       },
     });
   }
-})
+});
 
-router.post("/unSetPrefer", async(request, response)=>{
-  const {num, user} = request.body
-  const delPref = "DELETE FROM public.forseti_prefer WHERE person=$1 AND rule=$2"
-  const delPrefVal = [user, num]
-  try{
-    await pgQuery.query(delPref, delPrefVal)
-    response.status(200).send('Вы отменили голосование за нужность закона')
-  } catch(error){
-    console.log(error)
+router.post("/unSetPrefer", async (request, response) => {
+  const { num, user } = request.body;
+  const delPref =
+    "DELETE FROM public.forseti_prefer WHERE person=$1 AND rule=$2";
+  const delPrefVal = [user, num];
+  try {
+    await pgQuery.query(delPref, delPrefVal);
+    response.status(200).send("Вы отменили голосование за нужность закона");
+  } catch (error) {
+    console.log(error);
     return response.status(400).send({
       error: {
         message: "Ошибка при отмене голосования за нужность закона",
@@ -58,17 +60,18 @@ router.post("/unSetPrefer", async(request, response)=>{
       },
     });
   }
-})
+});
 
-router.post("/setNotPrefer", async(request, response)=>{
-  const {num, user} = request.body
-  const insNotPref = "INSERT INTO public.forseti_notprefer (person, rule) VALUES ($1, $2)"
-  const insNotPrefVal = [user, num]
-  try{
-    await pgQuery.query(insNotPref, insNotPrefVal)
-    response.status(200).send('Вы проголосовали за НЕнужность закона')
-  } catch(error){
-    console.log(error)
+router.post("/setNotPrefer", async (request, response) => {
+  const { num, user } = request.body;
+  const insNotPref =
+    "INSERT INTO public.forseti_notprefer (person, rule) VALUES ($1, $2)";
+  const insNotPrefVal = [user, num];
+  try {
+    await pgQuery.query(insNotPref, insNotPrefVal);
+    response.status(200).send("Вы проголосовали за НЕнужность закона");
+  } catch (error) {
+    console.log(error);
     return response.status(400).send({
       error: {
         message: "Ошибка при голосовании за НЕнужность закона",
@@ -76,17 +79,18 @@ router.post("/setNotPrefer", async(request, response)=>{
       },
     });
   }
-})
+});
 
-router.post("/unSetNotPrefer", async(request, response)=>{
-  const {num, user} = request.body
-  const delUnPref = "DELETE FROM public.forseti_notprefer WHERE person=$1 AND rule=$2"
-  const delUnPrefVal = [user, num]
-  try{
-    await pgQuery.query(delUnPref, delUnPrefVal)
-    response.status(200).send('Вы отменили голосование за НЕнужность закона')
-  } catch(error){
-    console.log(error)
+router.post("/unSetNotPrefer", async (request, response) => {
+  const { num, user } = request.body;
+  const delUnPref =
+    "DELETE FROM public.forseti_notprefer WHERE person=$1 AND rule=$2";
+  const delUnPrefVal = [user, num];
+  try {
+    await pgQuery.query(delUnPref, delUnPrefVal);
+    response.status(200).send("Вы отменили голосование за НЕнужность закона");
+  } catch (error) {
+    console.log(error);
     return response.status(400).send({
       error: {
         message: "Ошибка при отмене голосования за НЕнужность закона",
@@ -94,18 +98,19 @@ router.post("/unSetNotPrefer", async(request, response)=>{
       },
     });
   }
-})
+});
 
-router.post("/setUserVote", async(request, response)=>{
-  const {result, user, ruleNumber} = request.body
-  const insVote = "INSERT INTO public.forseti_voxpopuli (name, rule_number, result) VALUES ($1, $2, $3)"
-  const insVoteVal = [user, ruleNumber, result]
+router.post("/setUserVote", async (request, response) => {
+  const { result, user, ruleNumber } = request.body;
+  const insVote =
+    "INSERT INTO public.forseti_voxpopuli (name, rule_number, result) VALUES ($1, $2, $3)";
+  const insVoteVal = [user, ruleNumber, result];
 
-  try{
-    await pgQuery.query(insVote, insVoteVal)
-    response.status(200).send("Добавлено")
-  } catch(error){
-    console.log(error)
+  try {
+    await pgQuery.query(insVote, insVoteVal);
+    response.status(200).send("Добавлено");
+  } catch (error) {
+    console.log(error);
     return response.status(400).send({
       error: {
         message: "Ошибка при голосовании за закон",
@@ -113,18 +118,19 @@ router.post("/setUserVote", async(request, response)=>{
       },
     });
   }
-})
+});
 
-router.post("/discardUserVote", async(request, response)=>{
-  const {user, ruleNumber} = request.body
-  const delVote = "DELETE FROM public.forseti_voxpopuli WHERE name=$1 AND rule_number=$2"
-  const delVoteVal = [user, ruleNumber]
+router.post("/discardUserVote", async (request, response) => {
+  const { user, ruleNumber } = request.body;
+  const delVote =
+    "DELETE FROM public.forseti_voxpopuli WHERE name=$1 AND rule_number=$2";
+  const delVoteVal = [user, ruleNumber];
 
-  try{
-    await pgQuery.query(delVote, delVoteVal)
-    response.status(200).send("Удалено")
-  } catch(error){
-    console.log(error)
+  try {
+    await pgQuery.query(delVote, delVoteVal);
+    response.status(200).send("Удалено");
+  } catch (error) {
+    console.log(error);
     return response.status(400).send({
       error: {
         message: "Ошибка при удалении голосования за закон",
@@ -132,17 +138,18 @@ router.post("/discardUserVote", async(request, response)=>{
       },
     });
   }
-})
+});
 
-router.post("/addSuggestion", async(request, response)=>{
-  const {text, name} = request.body
-  const insSug = "INSERT INTO public.forseti_suggestions (author, text) VALUES ($1, $2)"
-  const insSugVal = [name, text]
-  try{
-    await pgQuery.query(insSug, insSugVal)
-    response.status(200).send("Предложение отправлено")
-  } catch(error){
-    console.log(error)
+router.post("/addSuggestion", async (request, response) => {
+  const { text, name } = request.body;
+  const insSug =
+    "INSERT INTO public.forseti_suggestions (author, text) VALUES ($1, $2)";
+  const insSugVal = [name, text];
+  try {
+    await pgQuery.query(insSug, insSugVal);
+    response.status(200).send("Предложение отправлено");
+  } catch (error) {
+    console.log(error);
     return response.status(400).send({
       error: {
         message: "Ошибка при добавлении предложения",
@@ -150,7 +157,7 @@ router.post("/addSuggestion", async(request, response)=>{
       },
     });
   }
-})
+});
 
 router.get("/:ruleNumber/:userId", async (request, response) => {
   try {
@@ -158,7 +165,7 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
     const selectOneRule =
       "SELECT id, title, rule_number, description, initialization_date, rule_link, " +
       "voting_date, visits, populated, voted, author, branch, rejection, yet_voted, " +
-      "set_start_period, populi_voted, result_deputy_vote, result_populi_vote, constitutional " +
+      "set_start_period, populi_voted, result_deputy_vote, result_populi_vote, constitutional, last_visit " +
       "FROM public.forseti_rules WHERE rule_number=$1 ORDER BY id ASC";
     const oneRuleValue = [ruleNumber];
     const oneRule = await pgQuery.query(selectOneRule, oneRuleValue);
@@ -200,7 +207,27 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
       notPreferCountVal
     );
 
+    ///////////////////////////////  ОБНОВЛЕНИЕ КОЛИЧЕСТВА ПРОСМОТРОВ ЗАКОНА  ///////////////////////////////////
+
+    const visits = oneRule[0].visits + 1;
+    const lastVisitFromDB = oneRule[0].last_visit;
+    const lastVisit = new Date();
+    const visitsInterval = lastVisit - lastVisitFromDB;
+    if (visitsInterval > 3000) {                  // сервер почему-то дублирует запрос, поэтому ставлю
+      const updateVisits =                        // порог обновления количества обращений к закону в 3 секунды
+        "UPDATE public.forseti_rules SET visits=$1, last_visit=$2 WHERE rule_number=$3";
+      const updateVisitsVal = [visits, lastVisit, oneRuleNumber];
+      try {
+        await pgQuery.query(updateVisits, updateVisitsVal);
+      } catch (error) {
+        console.log(error);
+      }
+    }
+
+    /////////////////////////////////////  СПИСОК КОММЕНТАРИЕВ К ЗАКОНУ  ////////////////////////////////////
+
     const ruleId = oneRule[0].id;
+
     const selComments =
       "SELECT * FROM public.forseti_comments WHERE rule_id=$1";
     const selCommentsVal = [ruleId];
