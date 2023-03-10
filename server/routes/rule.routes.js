@@ -279,8 +279,8 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
     //////////////////////////////   ГОЛОСОВАНИЕ ПОЛЬЗОВАТЕЛЯ   /////////////////////////////////
 
     const selUserVote =
-      "SELECT result FROM public.forseti_voxpopuli WHERE name=$1";
-    const selUserVoteVal = [currentUser];
+      "SELECT result FROM public.forseti_voxpopuli WHERE name=$1 AND rule_number=$2";
+    const selUserVoteVal = [currentUser, ruleNumber];
     let userVote = await pgQuery.query(selUserVote, selUserVoteVal);
     if (userVote.length !== 0) {
       userVote = userVote[0].result;

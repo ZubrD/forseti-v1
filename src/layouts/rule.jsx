@@ -95,6 +95,7 @@ const Rule = ({ match }) => {
   let deputyShortName;
   let initialisationDate;
   let findedRule;
+  let ruleId
   let initialisationDateString;
   let workDuration;
   let currentUser;
@@ -134,6 +135,8 @@ const Rule = ({ match }) => {
     // console.log("Загрузка закона завершена");
     // console.log(ruleAndUserFromStore);
     findedRule = ruleAndUserFromStore.oneRule[0]; // Данные о законе
+    ruleId = ruleAndUserFromStore.oneRule[0].id; // Данные о законопроекта
+    console.log(ruleId)
     currentUser = ruleAndUserFromStore.currUser; // Имя пользователя
     necessity = ruleAndUserFromStore.prefer; // Нужность закона для этого пользователя
     unNecessity = ruleAndUserFromStore.notPrefer;
@@ -358,7 +361,7 @@ const Rule = ({ match }) => {
                       id="comment-textarea"
                       name="comm"
                       author={currentUser} /* через dataset не работает */
-                      rule-id={comments[0].rule_id}
+                      rule-id={ruleId}
                       onChange={handleChangeComment}
                     ></textarea>
                     <input
