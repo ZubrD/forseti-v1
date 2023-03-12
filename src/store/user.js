@@ -119,6 +119,13 @@ export const signUp = (payload) => async (dispatch) => {
 
 export const getIsLoggedIn = () => (state) => state.user.isLoggedIn;
 export const getAuthErrors = () => (state) => state.user.error;
-export const getUserFromStore = ()=>(state)=> state.user.auth.userId
+export const getUserFromStore = ()=>(state)=> {
+  if(state.user.auth){
+    return state.user.auth.userId
+  } else {
+    return "anomous"
+  }
+  
+}
 
 export default userReducer;

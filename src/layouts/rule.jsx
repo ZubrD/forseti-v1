@@ -45,7 +45,8 @@ const Rule = ({ match }) => {
   ];
 
   let modifiedComments;
-  if (comments) {                               // В массиве комментариев заменяю дату на удобоваримую
+  if (comments) {
+    // В массиве комментариев заменяю дату на удобоваримую
     modifiedComments = comments.map((item) => {
       return {
         id: item.id,
@@ -61,7 +62,7 @@ const Rule = ({ match }) => {
     text: "",
     name: "",
     date1: "",
-    rule_id: ""
+    rule_id: "",
   });
 
   useEffect(() => {
@@ -71,22 +72,22 @@ const Rule = ({ match }) => {
 
   const handleChangeComment = (event) => {
     const commentText = event.target.value;
-    const commentAuthor = event.target.attributes["author"].value;  // запрос к значению атрибут можно сделать и так 
-    const commentRuleId = event.target.getAttribute("rule-id")      // и так
+    const commentAuthor = event.target.attributes["author"].value; // запрос к значению атрибут можно сделать и так
+    const commentRuleId = event.target.getAttribute("rule-id"); // и так
     setNewComment((prevState) => ({
       ...prevState,
       text: commentText,
       name: commentAuthor,
       rule_id: commentRuleId,
-      date1: Date.now() 
+      date1: Date.now(),
     }));
   };
 
   const handleSubmitComment = (event) => {
     event.preventDefault();
-    const commentTextarea = document.getElementById("comment-textarea")
-    dispatch(createComment(newComment))
-    commentTextarea.value=""
+    const commentTextarea = document.getElementById("comment-textarea");
+    dispatch(createComment(newComment));
+    commentTextarea.value = "";
   };
 
   const isLoggedIn = useSelector(getIsLoggedIn());
@@ -95,7 +96,7 @@ const Rule = ({ match }) => {
   let deputyShortName;
   let initialisationDate;
   let findedRule;
-  let ruleId
+  let ruleId;
   let initialisationDateString;
   let workDuration;
   let currentUser;
@@ -136,7 +137,6 @@ const Rule = ({ match }) => {
     // console.log(ruleAndUserFromStore);
     findedRule = ruleAndUserFromStore.oneRule[0]; // Данные о законе
     ruleId = ruleAndUserFromStore.oneRule[0].id; // Данные о законопроекта
-    console.log(ruleId)
     currentUser = ruleAndUserFromStore.currUser; // Имя пользователя
     necessity = ruleAndUserFromStore.prefer; // Нужность закона для этого пользователя
     unNecessity = ruleAndUserFromStore.notPrefer;
@@ -240,8 +240,6 @@ const Rule = ({ match }) => {
     }
   }
 
-
-
   return (
     <>
       <NavBar />
@@ -334,21 +332,22 @@ const Rule = ({ match }) => {
             </div>
           )}
           {/* //////////////////////// ВАМ ЭТОТ ЗАКОН НУЖЕН? /////////////////////////// */}
+          <RuleNecessity
+            isLoggedIn={isLoggedIn}
+            necessity={necessity}
+            currentUser={currentUser}
+            ruleNumber={ruleNumber}
+            onClickNecessary={handleClickNecessary}
+            unNecessity={unNecessity}
+            onClickUnnecessary={handleClickUnnecessary}
+            countPrefer={countPrefer}
+            countNotPrefer={countNotPrefer}
+            usefulness={usefulness}
+            usefulnessColor={usefulnessColor}
+          />
+          {/* //////////////////////////////////// ОТПРАВИТЬ КОММЕНТАРИЙ ////////////////////////////// */}
           {isLoggedIn && (
             <>
-              <RuleNecessity
-                necessity={necessity}
-                currentUser={currentUser}
-                ruleNumber={ruleNumber}
-                onClickNecessary={handleClickNecessary}
-                unNecessity={unNecessity}
-                onClickUnnecessary={handleClickUnnecessary}
-                countPrefer={countPrefer}
-                countNotPrefer={countNotPrefer}
-                usefulness={usefulness}
-                usefulnessColor={usefulnessColor}
-              />
-              {/* //////////////////////////////////// ОТПРАВИТЬ КОММЕНТАРИЙ ////////////////////////////// */}
               <div className="row">
                 <div className="col">
                   <h4>Ваш комментарий</h4>
@@ -376,102 +375,109 @@ const Rule = ({ match }) => {
                   </form>
                 </div>
               </div>
-              {/* //////////////////////////////////// АККОРДЕОН КОММЕНТАРИЕВ //////////////////////////////////////// */}
-              {modifiedComments && (
-                <div className="row">
-                  <MDBAccordion>
-                    <MDBAccordionItem collapseId={1} headerTitle="Комментарии">
-                      {modifiedComments.map((comment) => (
-                        <div key={nanoid()}>
-                          <span className="text-bold">{comment.name} </span>
-                          <span className="text-italic">
-                            от {comment.date1}
-                          </span>
-                          <p className="text-comment">{comment.text}</p>
-                        </div>
-                      ))}
-                    </MDBAccordionItem>
-                  </MDBAccordion>
-                </div>
-              )}
-
-              {/* ///////////////////////////////////////  ГОЛОСОВАНИЯ  ////////////////////////////////////////////// */}
-              {populated && (
-                <>
-                  {/* ////////////////////////////////   РЕЗУЛЬТАТЫ ГОЛОСОВАНИЯ   ////////////////////////////////// */}
-                  <VotingResults
-                    resultDeputyVoteColor={resultDeputyVoteColor}
-                    resultDeputyVote={resultDeputyVote}
-                    resultPopuliVoteColor={resultPopuliVoteColor}
-                    resultPopuliVote={resultPopuliVote}
-                  />
-                  {/* ////////////////////////   ДИАГРАММА ГОЛОСОВАНИЯ ДЕПУТАТОВ    //////////////////////////////// */}
-                  <div className="row">
-                    {deputyVoteTotal && (
-                      <>
-                        <DeputyPieChart
-                          deputyVoteYes={deputyVoteYes}
-                          deputyVoteNo={deputyVoteNo}
-                          deputyVoteAbstained={deputyVoteAbstained}
-                          deputyNotVote={deputyNotVote}
-                        />
-                        {/* ////////////////////////////    ТАБЛИЦА РЕЗУЛЬТАТОВ ГОЛОСОВАНИЯ ДЕПУТАТОВ     ///////////////////////////// */}
-                        <DeputyVoteTable
-                          deputyVoteYes={deputyVoteYes}
-                          deputyVoteYesPr={deputyVoteYesPr}
-                          deputyVoteNo={deputyVoteNo}
-                          deputyVoteNoPr={deputyVoteNoPr}
-                          deputyVoteAbstained={deputyVoteAbstained}
-                          deputyVoteAbstainedPr={deputyVoteAbstainedPr}
-                          deputyNotVote={deputyNotVote}
-                          deputyNotVotePr={deputyNotVotePr}
-                        />
-                      </>
-                    )}
-
-                    {populiVoteTotal && (
-                      <>
-                        {/* ////////////////////////////////    ДИАГРАММА ГОЛОСОВАНИЯ НАРОДА    //////////////////////////////////// */}
-                        <PopuliPieChart
-                          populiVoteYes={populiVoteYes}
-                          populiVoteNo={populiVoteNo}
-                          populiVoteAbstained={populiVoteAbstained}
-                        />
-                        {/* ////////////////////////////    ТАБЛИЦА РЕЗУЛЬТАТОВ ГОЛОСОВАНИЯ НАРОДА     ///////////////////////////// */}
-                        <PopuliVoteTable
-                          populiVoteYes={populiVoteYes}
-                          populiVoteYesPr={populiVoteYesPr}
-                          populiVoteNo={populiVoteNo}
-                          populiVoteNoPr={populiVoteNoPr}
-                          populiVoteAbstained={populiVoteAbstained}
-                          populiVoteAbstainedPr={populiVoteAbstainedPr}
-                        />
-                      </>
-                    )}
-                  </div>
-                  {/* ///////////////////////////////////////   ФОРМА ГОЛОСОВАНИЯ   //////////////////////////////////////// */}
-                  {deputyVoteTotal && <VotingForm userVote={userVote} currentUser={currentUser} ruleNumber={ruleNumber} />}
-                  {!deputyVoteTotal && rejection && (
-                    <div className="row">
-                      <div className="col div-title">
-                        <h3>Данный закон отклонён</h3>
-                      </div>
-                    </div>
-                  )}
-                  {!deputyVoteTotal && !rejection && (
-                    <div className="row">
-                      <div className="col div-title">
-                        <h3>По этому закону ещё не проводилось голосование</h3>
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
             </>
           )}
+          <>
+            {/* //////////////////////////////////// АККОРДЕОН КОММЕНТАРИЕВ //////////////////////////////////////// */}
+            {modifiedComments && (
+              <div className="row">
+                <MDBAccordion>
+                  <MDBAccordionItem collapseId={1} headerTitle="Комментарии">
+                    {modifiedComments.map((comment) => (
+                      <div key={nanoid()}>
+                        <span className="text-bold">{comment.name} </span>
+                        <span className="text-italic">от {comment.date1}</span>
+                        <p className="text-comment">{comment.text}</p>
+                      </div>
+                    ))}
+                  </MDBAccordionItem>
+                </MDBAccordion>
+              </div>
+            )}
+
+            {/* ///////////////////////////////////////  ГОЛОСОВАНИЯ  ////////////////////////////////////////////// */}
+            {populated && (
+              <>
+                {/* ////////////////////////////////   РЕЗУЛЬТАТЫ ГОЛОСОВАНИЯ   ////////////////////////////////// */}
+                <VotingResults
+                  resultDeputyVoteColor={resultDeputyVoteColor}
+                  resultDeputyVote={resultDeputyVote}
+                  resultPopuliVoteColor={resultPopuliVoteColor}
+                  resultPopuliVote={resultPopuliVote}
+                />
+                {/* ////////////////////////   ДИАГРАММА ГОЛОСОВАНИЯ ДЕПУТАТОВ    //////////////////////////////// */}
+                <div className="row">
+                  {deputyVoteTotal && (
+                    <>
+                      <DeputyPieChart
+                        deputyVoteYes={deputyVoteYes}
+                        deputyVoteNo={deputyVoteNo}
+                        deputyVoteAbstained={deputyVoteAbstained}
+                        deputyNotVote={deputyNotVote}
+                      />
+                      {/* ////////////////////////////    ТАБЛИЦА РЕЗУЛЬТАТОВ ГОЛОСОВАНИЯ ДЕПУТАТОВ     ///////////////////////////// */}
+                      <DeputyVoteTable
+                        deputyVoteYes={deputyVoteYes}
+                        deputyVoteYesPr={deputyVoteYesPr}
+                        deputyVoteNo={deputyVoteNo}
+                        deputyVoteNoPr={deputyVoteNoPr}
+                        deputyVoteAbstained={deputyVoteAbstained}
+                        deputyVoteAbstainedPr={deputyVoteAbstainedPr}
+                        deputyNotVote={deputyNotVote}
+                        deputyNotVotePr={deputyNotVotePr}
+                      />
+                    </>
+                  )}
+
+                  {populiVoteTotal && (
+                    <>
+                      {/* ////////////////////////////////    ДИАГРАММА ГОЛОСОВАНИЯ НАРОДА    //////////////////////////////////// */}
+                      <PopuliPieChart
+                        populiVoteYes={populiVoteYes}
+                        populiVoteNo={populiVoteNo}
+                        populiVoteAbstained={populiVoteAbstained}
+                      />
+                      {/* ////////////////////////////    ТАБЛИЦА РЕЗУЛЬТАТОВ ГОЛОСОВАНИЯ НАРОДА     ///////////////////////////// */}
+                      <PopuliVoteTable
+                        populiVoteYes={populiVoteYes}
+                        populiVoteYesPr={populiVoteYesPr}
+                        populiVoteNo={populiVoteNo}
+                        populiVoteNoPr={populiVoteNoPr}
+                        populiVoteAbstained={populiVoteAbstained}
+                        populiVoteAbstainedPr={populiVoteAbstainedPr}
+                      />
+                    </>
+                  )}
+                </div>
+                {/* ///////////////////////////////////////   ФОРМА ГОЛОСОВАНИЯ   //////////////////////////////////////// */}
+
+                {isLoggedIn && deputyVoteTotal && (
+                  <VotingForm
+                    userVote={userVote}
+                    currentUser={currentUser}
+                    ruleNumber={ruleNumber}
+                  />
+                )}
+                {!deputyVoteTotal && rejection && (
+                  <div className="row">
+                    <div className="col div-title">
+                      <h3>Данный закон отклонён</h3>
+                    </div>
+                  </div>
+                )}
+                {!deputyVoteTotal && !rejection && (
+                  <div className="row">
+                    <div className="col div-title">
+                      <h3>По этому закону ещё не проводилось голосование</h3>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
+          </>
         </div>
       )}
-      <Footer currentUser={currentUser} />
+      <Footer isLoggedIn={isLoggedIn} currentUser={currentUser} />
     </>
   );
 };

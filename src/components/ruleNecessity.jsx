@@ -1,6 +1,7 @@
 import React from "react";
 
 const RuleNecessity = ({
+  isLoggedIn,
   necessity,
   currentUser,
   ruleNumber,
@@ -19,32 +20,47 @@ const RuleNecessity = ({
           <h3>Этот закон Вам нужен?</h3>
         </div>
       </div>
-      <div className="row">
-        <div className="col-6" id="div-set-likes">
-          <button
-            id="set-likes"
-            className={"button-" + (necessity ? "liked" : "not-liked")}
-            username={currentUser}
-            rule-number={ruleNumber}
-            liked={necessity ? "liked" : "not-liked"}
-            onClick={onClickNecessary}
-          >
-            Да
-          </button>
+      {isLoggedIn && (
+        <div className="row">
+          <div className="col-6" id="div-set-likes">
+            <button
+              id="set-likes"
+              className={"button-" + (necessity ? "liked" : "not-liked")}
+              username={currentUser}
+              rule-number={ruleNumber}
+              liked={necessity ? "liked" : "not-liked"}
+              onClick={onClickNecessary}
+            >
+              Да
+            </button>
+          </div>
+          <div className="col-6" id="div-set-dislikes">
+            <button
+              id="set-dislikes"
+              className={
+                "button-" + (unNecessity ? "disliked" : "not-disliked")
+              }
+              username={currentUser}
+              rule-number={ruleNumber}
+              disliked={unNecessity ? "disliked" : "not-disliked"}
+              onClick={onClickUnnecessary}
+            >
+              Нет
+            </button>
+          </div>
         </div>
-        <div className="col-6" id="div-set-dislikes">
-          <button
-            id="set-dislikes"
-            className={"button-" + (unNecessity ? "disliked" : "not-disliked")}
-            username={currentUser}
-            rule-number={ruleNumber}
-            disliked={unNecessity ? "disliked" : "not-disliked"}
-            onClick={onClickUnnecessary}
-          >
-            Нет
-          </button>
+      )}
+
+      {!isLoggedIn && (
+        <div className="row">
+          <div className="col-6">
+            <p className="necessity fs-2">Да</p>
+          </div>
+          <div className="col-6">
+            <p className="necessity fs-2">Нет</p>
+          </div>
         </div>
-      </div>
+      )}
       <div className="row">
         <div className="col-6" id="div-span-likes">
           <p id="span-likes">{countPrefer}</p>

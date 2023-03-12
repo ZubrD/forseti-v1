@@ -169,12 +169,18 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
       "FROM public.forseti_rules WHERE rule_number=$1 ORDER BY id ASC";
     const oneRuleValue = [ruleNumber];
     const oneRule = await pgQuery.query(selectOneRule, oneRuleValue);
+    
 
     const selectUser = "SELECT username FROM public.auth_user WHERE my_id=$1";
     const selectUserValue = [userId];
     const user = await pgQuery.query(selectUser, selectUserValue);
-
-    const currentUser = user[0].username;
+    
+    let currentUser
+    if(user.length>0){
+      currentUser = user[0].username;
+    } else {
+      currentUser = "anonimous";
+    }
     const oneRuleNumber = oneRule[0].rule_number;
 
     const selectPrefer =
