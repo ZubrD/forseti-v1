@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { getOneRule, loadOneRule } from "../store/rule";
-import { getDeputy } from "../store/deputy";
+import { getDeputy, loadDeputyList } from "../store/deputy";
 import { MDBAccordion, MDBAccordionItem } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import { nanoid } from "nanoid";
@@ -66,6 +66,7 @@ const Rule = ({ match }) => {
   });
 
   useEffect(() => {
+    dispatch(loadDeputyList())
     dispatch(loadOneRule(ruleNumber, userId));
     dispatch(loadCommentsList(ruleNumber, userId));
   }, []);
