@@ -1,47 +1,72 @@
 import { createSlice } from "@reduxjs/toolkit";
+import deputyService from "../services/deputy.service";
 
 const deputySlice = createSlice({
-  name: "deputy",
+  name: "deputies",
   initialState: {
     entities: null,
     isLoading: true,
+    deputyLoading: false,
+    deputy: null,
     error: null,
   },
   reducers: {
-    deputyRequested: (state) => {
+    deputiesListRequested: (state) => {
       state.isLoading = true;
     },
-    deputyReceived: (state, action) => {
+    deputiesListReceived: (state, action) => {
       state.entities = action.payload;
       state.isLoading = false;
     },
-    deputyRequestFailed: (state, action) => {
+    deputiesListRequestFailed: (state, action) => {
       state.error = action.payload;
       state.isLoading = false;
+    },
+    oneDeputyRequested: (state) => {
+      state.deputyLoading = true;
+    },
+    oneDeputyReceived: (state, action) => {
+      state.deputy = action.payload;
+      state.deputyLoading = false;
+    },
+    oneDeputyRequestFailed: (state, action) => {
+      state.deputyLoading = false;
+      state.error = action.payload;
     },
   },
 });
 
 const { reducer: deputyReducer, actions } = deputySlice;
-const { deputyRequested, deputyReceived, deputyRequestFailed } = actions;
+const {
+  deputiesListRequested,
+  deputiesListReceived,
+  deputiesListRequestFailed,
+  oneDeputyRequested,
+  oneDeputyReceived,
+  oneDeputyRequestFailed,
+} = actions;
 
-export const loadDeputyList = () => (dispatch) => {
-
-  dispatch(deputyRequested());
+export const loadDeputyList = () => async (dispatch) => {
+  dispatch(deputiesListRequested());
   try {
-    fetch("http://localhost:3001/deputies")
-      .then((response) => {
-        return response.text();
-      })
-      .then((data) => {
-        const newData = JSON.parse(data);
-        dispatch(deputyReceived(newData));
-      });
+    const deputyData = await deputyService.getTotalDeputiesList(); // Получение с сервера данных по депутатам
+    dispatch(deputiesListReceived(deputyData));
   } catch (error) {
-    dispatch(deputyRequestFailed(error));
+    dispatch(deputiesListRequestFailed(error));
   }
 };
 
-export const getDeputy = () => (state) => state.deputy.entities;
+export const loadOneDeputy = (deputyName) => async (dispatch) => {
+  dispatch(oneDeputyRequested());
+  try {
+    const oneDeputyData = await deputyService.getOneDeputy(deputyName);
+    dispatch(oneDeputyReceived(oneDeputyData));
+  } catch (error) {
+    dispatch(oneDeputyRequestFailed());
+  }
+};
+
+export const getDeputy = () => (state) => state.deputies.entities;
+export const getOneDeputy = ()=>(state)=> state.deputies.deputy
 
 export default deputyReducer;

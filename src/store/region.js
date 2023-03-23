@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import regionService from "../services/region.service";
 
 const regionSlice = createSlice({
   name: "region",
@@ -26,23 +27,17 @@ const { reducer: regionReducer, actions } = regionSlice;
 
 const { regionRequested, regionReceived, regionRequestFailed } = actions;
 
-export const loadRegion = () => (dispatch) => {
+export const loadRegion = () => async (dispatch) => {
   dispatch(regionRequested());
   try {
-    fetch("http://localhost:3001/regions")
-      .then((response) => {
-        return response.text();
-      })
-      .then((data) => {
-        const newData = JSON.parse(data);
-        dispatch(regionReceived(newData));
-      });
+    const regionData = await regionService.getTotalRegionsList();   // Получение с сервера данных по регионам
+    dispatch(regionReceived(regionData));
   } catch (error) {
     dispatch(regionRequestFailed(error));
   }
 };
 
-export const getRegion = () => (state) => state.region.entities;
 
+export const getRegion = () => (state) => state.region.entities;
 
 export default regionReducer;

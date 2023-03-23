@@ -1,5 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import { nanoid } from "nanoid";
 
 const SearchRule = ({ filteredRules, hightlight, onChange }) => {
   return (
@@ -22,11 +23,12 @@ const SearchRule = ({ filteredRules, hightlight, onChange }) => {
       >
         <div className="col-6">
           <div className="card card-body">
+            
             {filteredRules &&
               filteredRules.map((rule) => {
                 hightlight = !hightlight; // Для чередования выделения цветом результатов поиска
                 return (
-                  <Link key={rule.id} to={`rules/${rule.rule_number}`}>
+                  <Link key={nanoid()} to={`rule/${rule.rule_number}`}>
                     <div
                       className={hightlight ? "hightlight-search-result" : ""}
                       role="button"

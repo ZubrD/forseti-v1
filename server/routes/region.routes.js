@@ -1,21 +1,15 @@
 const express = require("express");
-const Pool = require("pg").Pool;
-const config = require('config')
+const pgQuery = require('postgresql-query')
+const connection = require("../config/default.json");
 
+pgQuery.config(connection.connectViaPgQueries); // Соединение с базой через postgresql-query
 const router = express.Router({ mergeParams: true });
-const pool = new Pool(config.get('connectDb'))
 
-router.get("/", (request, response) => {
-    pool.query(
-      "SELECT * FROM public.forseti_federalregion ORDER BY id ASC",
-      (error, results) => {
-        if (error) {
-          console.log('Что-то не так с запросом getRegions', error);
-        }
-        response.status(200).json(results.rows)
-      }
-    );
-    // pool.end()  
-});
+router.get("/regions-total-list", async (request, response)=>{
+  const selectRegions = "SELECT * FROM public.forseti_federalregion ORDER BY id ASC"
+  const regionsList = await pgQuery.query(selectRegions)
+  response.status(200).send(regionsList)
+
+})
 
 module.exports = router;

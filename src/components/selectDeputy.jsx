@@ -1,6 +1,6 @@
 import React from "react";
 
-const SelectDeputy = ({ deputiesList, disabledStatus }) => {
+const SelectDeputy = ({ deputiesList, disabledStatus, onChange }) => {
   return (
     <div className="col-md-3 mb-4 mt-4">
       <label htmlFor="validationCustom05" className="form-label">
@@ -12,6 +12,7 @@ const SelectDeputy = ({ deputiesList, disabledStatus }) => {
         id="validationCustom05"
         required
         disabled={disabledStatus}
+        onChange={onChange}
       >
         <option disabled value="">
           Выберите депутата...
