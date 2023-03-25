@@ -6,6 +6,7 @@ const app = express();
 const PORT = config.get('port');
 const { Pool } = require("pg");
 const routes = require('./routes')
+const path = require('path')
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -21,6 +22,16 @@ app.use(function (req, res, next) {
   );
   next();
 });
+
+if(process.env.NODE_ENV === 'production'){      // Здесь начинается переход к запуску проекта только со стороны сервера
+  app.use('/', express.static(path.join(__dirname, 'client')))
+
+  const indexPath = path.join(__dirname, 'client', 'index.html')
+
+  app.get('*', (request, response)=>{
+    response.sendFile(indexPath)
+  })
+}
 
 async function start() {
   try {
