@@ -1,0 +1,11 @@
+{
+  "port": 3001,
+  "connectViaPgQueries": {
+    "username": "postgres",
+    "host": "194.67.86.212",
+    "database": "forseti_db",
+    "password": "12345"
+  },
+  "accessSecretString": "my secret phrase to access to web",
+  "refreshSecretString": "my secret phrase to refresh token"
+}

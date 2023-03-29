@@ -16,10 +16,11 @@
     "pg": "^8.8.0",
     "postgresql-query": "^3.1.0",
     "react-scripts": "5.0.1",
+    "uuid": "^9.0.0",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "start": "cross-env NODE_ENV=production node app.js",
+    "start": "cross-env NODE_ENV=production nodemon app.js",
     "serve": "cross-env NODE_ENV=development nodemon app.js"
   },
   "eslintConfig": {
