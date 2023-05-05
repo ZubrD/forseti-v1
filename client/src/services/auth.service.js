@@ -21,7 +21,7 @@ const authService = {
       password,
       returnSecureToken: true,
     });
-    localStorageService.setTokens(data);
+    // localStorageService.setTokens(data);    // Повторяется с тем, что в user.js УДАЛИТЬ!!!!!
     return data;
   },
   refresh: async () => {

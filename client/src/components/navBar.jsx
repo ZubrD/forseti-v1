@@ -1,10 +1,11 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { getIsLoggedIn } from "../store/user";
+import { getIsLoggedIn, getUserName } from "../store/user";
 
 const NavBar = () => {
   const isLoggedIn = useSelector(getIsLoggedIn());
+  const userName = useSelector(getUserName());
 
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light">
@@ -25,12 +26,11 @@ const NavBar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <ul className="navbar-nav">
-            <li className="nav-item">
-              <span className="nav-link">Незнакомец!</span>
-            </li>
-
             {!isLoggedIn && (
               <>
+                <li className="nav-item">
+                  <span className="nav-link">Незнакомец!</span>
+                </li>
                 <li className="nav-item">
                   <Link className="nav-link" to="/register">
                     Регистрация
@@ -44,11 +44,16 @@ const NavBar = () => {
               </>
             )}
             {isLoggedIn && (
-              <li className="nav-item">
-                <Link className="nav-link" to="/logout">
-                  Выход
-                </Link>
-              </li>
+              <>
+                <li className="nav-item">
+                  <span className="nav-link">Привет, {userName}!</span>
+                </li>              
+                <li className="nav-item">
+                  <Link className="nav-link" to="/logout">
+                    Выход
+                  </Link>
+                </li>
+              </>
             )}
           </ul>
         </div>

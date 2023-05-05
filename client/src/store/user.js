@@ -10,7 +10,10 @@ const initialState = localStorageService.getAccessToken()
       entities: null,
       isLoading: true,
       error: null,
-      auth: { userId: localStorageService.getUserId() },
+      auth: {
+        userId: localStorageService.getUserId(),
+        userName: localStorageService.getUserName(),
+      },
       isLoggedIn: true,
       dataLoaded: false,
     }
@@ -18,7 +21,10 @@ const initialState = localStorageService.getAccessToken()
       entities: null,
       isLoading: false,
       error: null,
-      auth: null,
+      auth: {
+        userId: null,
+        userName: null,
+      },
       isLoggedIn: false,
       dataLoaded: false,
     };
@@ -73,6 +79,7 @@ export const login =
     dispatch(authRequested());
     try {
       const data = await authService.login({ email, password });
+      console.log(data);
       localStorageService.setTokens(data);
       dispatch(
         authRequestSuccess({ userId: data.userId, userName: data.userName })
@@ -100,32 +107,41 @@ export const signUp = (payload) => async (dispatch) => {
   dispatch(authRequested());
   try {
     const data = await authService.register(payload);
-    console.log("data ", data);
-
-    if (!data.error.code) {
-      localStorageService.setTokens(data);
-      dispatch(authRequestSuccess({ userId: data.userId }));
-      window.location.href = "http://localhost:3000"
+   
+    console.log("data ", data.error);
+    if (!data.error) {
+      // localStorageService.setTokens(data);
+      // dispatch(authRequestSuccess({ userId: data.userId }));
+      console.log("data ", data);
+      window.history.back();
     } else {
       if (data.error.code === 400) {
         const errorMessage = genereteAuthError(data.error.message);
         dispatch(authRequestFailed(errorMessage));
+        console.log("data ", data.error.code);
       }
-    }
+    }    
   } catch (error) {
     // console.log(error)
   }
 };
 
 export const getIsLoggedIn = () => (state) => state.user.isLoggedIn;
-export const getAuthErrors = () => (state) => state.user.error;
-export const getUserFromStore = ()=>(state)=> {
-  if(state.user.auth){
-    return state.user.auth.userId
+export const getUserName = () => (state) => {
+  if (state.user.auth) {
+    return state.user.auth.userName;
   } else {
-    return "anomous"
+    return "anonimous";
   }
-  
-}
+};
+export const getAuthErrors = () => (state) => state.user.error;
+export const getUserFromStore = () => (state) => {
+  if (state.user.auth) {
+    console.log(state.user);
+    return state.user.auth.userId;
+  } else {
+    return "anomous";
+  }
+};
 
 export default userReducer;
