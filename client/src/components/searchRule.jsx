@@ -6,7 +6,7 @@ const SearchRule = ({ filteredRules, hightlight, onChange }) => {
   return (
     <>
       <div className="input-group mb-3 row">
-        <div className="col-6">
+        <div className="col-6 div-search-rule">
           <input
             type="text"
             className="form-control"

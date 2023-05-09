@@ -57,7 +57,7 @@ router.post("/signUp", [
       const hashedPassword = await bcrypt.hash(password, 12);
       const myId = uuidv4();
       const tokens = tokenService.generate({ myId: myId });
-
+      
       const newUserQueryText =
         "INSERT INTO public.auth_user (password, username, email, my_id) VALUES ($1, $2, $3, $4)";
       const newUserQueryValues = [hashedPassword, username, email, myId];
@@ -75,7 +75,7 @@ router.post("/signUp", [
       console.log("Что-то не так с регистрацией:", error.message);
       return response.status(400).send({
         error: {
-          message: "USER_EXISTS",
+          message: "Ошибка запроса при регистрации",
           code: 499,
         },
       });
