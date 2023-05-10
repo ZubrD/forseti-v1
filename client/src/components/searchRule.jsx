@@ -6,11 +6,11 @@ const SearchRule = ({ filteredRules, hightlight, onChange }) => {
   return (
     <>
       <div className="input-group mb-3 row">
-        <div className="col-6 div-search-rule">
+        <div className="col-6 offset-6 div-search-rule">
           <input
             type="text"
             className="form-control"
-            placeholder="Поиск начнётся после ввода 5 символов"
+            placeholder="Поиск закона начнётся после ввода 5 символов"
             aria-label="Username"
             aria-describedby="basic-addon1"
             onChange={onChange}
