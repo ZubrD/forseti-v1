@@ -26,6 +26,24 @@
     text-align: center;
 }
 
+.rules-in-table-index tr:nth-child(odd){
+    background-color: #e3e3e3;
+}
+
+.new-rule-td {
+    width: 220px;
+}
+
+.card-title {
+    text-align: center;
+}
+
+.card-my-scroll {
+    overflow-y: scroll;
+    height: 225px;
+    margin-bottom: 30px;
+}
+
 
 /*****************************************************************************************************/
 /*                                          СТРАНИЦА ЗАКОНА                                          */

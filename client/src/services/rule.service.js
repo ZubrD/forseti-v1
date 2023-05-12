@@ -10,6 +10,10 @@ const ruleService = {
     const { data } = await httpRule.get("rules-total-list/");   // адрес "rules-total-list/" - должен совпадать с одним из роутов 
     return data;
   },
+  getNewRulesList: async ()=> {
+    const {data} = await httpRule.get("new-rules/")
+    return data
+  },
   getOneRule: async(num, user)=>{
     const {data} = await httpRule.get(`/${num}/${user}`)
     return data

@@ -5,12 +5,40 @@ const connection = require("../config/default.json");
 pgQuery.config(connection.connectViaPgQueries); // Соединение с базой через postgresql-query
 const router = express.Router({ mergeParams: true });
 
+function modifyDate(date) {
+  const year = date.getFullYear();
+  let month = date.getMonth() + 1;
+  let day = date.getDate();
+  if (day < 10) {
+    day = "0" + day;
+  }
+  if (month < 10) {
+    month = "0" + month;
+  }
+  return year + "-" + month + "-" + day;
+}
+
 router.get("/rules-total-list", async (request, response) => {
-  // const selectRules =
-  //   "SELECT * FROM public.forseti_rules ORDER BY id ASC LIMIT 100";
   const selectRules =
     "SELECT title, rule_number FROM public.forseti_rules ORDER BY id ASC";
   const rulesList = await pgQuery.query(selectRules);
+  response.status(200).send(rulesList);
+});
+
+router.get("/new-rules", async (request, response) => {
+  const selectLastDate =        // Определяю последнюю дату
+    "SELECT initialization_date FROM public.forseti_rules ORDER BY initialization_date DESC LIMIT 1";
+
+  const dateArr = await pgQuery.query(selectLastDate);
+  const date = dateArr[0].initialization_date;
+
+  date.setDate(date.getDate() - 7);   // Отсчитываю 7 дней от последней даты
+  const stringDate = modifyDate(date);
+
+  const selectRules =   // Выбираю законы, поступившие на рассмотрение за последнюю неделю
+    "SELECT title, rule_number, initialization_date FROM public.forseti_rules WHERE initialization_date>=$1 ORDER BY initialization_date DESC";
+  const selectRulesVal = [stringDate];
+  const rulesList = await pgQuery.query(selectRules, selectRulesVal);
   response.status(200).send(rulesList);
 });
 
@@ -169,14 +197,13 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
       "FROM public.forseti_rules WHERE rule_number=$1 ORDER BY id ASC";
     const oneRuleValue = [ruleNumber];
     const oneRule = await pgQuery.query(selectOneRule, oneRuleValue);
-    
 
     const selectUser = "SELECT username FROM public.auth_user WHERE my_id=$1";
     const selectUserValue = [userId];
     const user = await pgQuery.query(selectUser, selectUserValue);
-    
-    let currentUser
-    if(user.length>0){
+
+    let currentUser;
+    if (user.length > 0) {
       currentUser = user[0].username;
     } else {
       currentUser = "anonimous";
@@ -219,8 +246,9 @@ router.get("/:ruleNumber/:userId", async (request, response) => {
     const lastVisitFromDB = oneRule[0].last_visit;
     const lastVisit = new Date();
     const visitsInterval = lastVisit - lastVisitFromDB;
-    if (visitsInterval > 3000) {                  // сервер почему-то дублирует запрос, поэтому ставлю
-      const updateVisits =                        // порог обновления количества обращений к закону в 3 секунды
+    if (visitsInterval > 3000) {
+      // сервер почему-то дублирует запрос, поэтому ставлю
+      const updateVisits = // порог обновления количества обращений к закону в 3 секунды
         "UPDATE public.forseti_rules SET visits=$1, last_visit=$2 WHERE rule_number=$3";
       const updateVisitsVal = [visits, lastVisit, oneRuleNumber];
       try {

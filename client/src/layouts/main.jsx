@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getDeputy, loadDeputyList } from "../store/deputy";
-import { getRule, loadRuleList } from "../store/rule";
+import { getNewRules, getRule, loadRuleList } from "../store/rule";
 import { getRegion, loadRegion } from "../store/region";
 import SelectRegion from "../components/selectRegion";
 import SelectDeputy from "../components/selectDeputy";
@@ -22,6 +22,7 @@ const Main = () => {
   const deputies = useSelector(getDeputy());
   const region = useSelector(getRegion());
   const task = useSelector(getTask());
+  const newRules = useSelector(getNewRules())
   let hightlight = true; // Через useState не получается - бесконечный рендеринг
 
   const handleSelectRegion = ({ target }) => {
@@ -96,7 +97,7 @@ const Main = () => {
         {/*///////////////////////// ВЫПАДАЮЩИЙ СПИСОК ПОД ЗАГОЛОВОКОМ МОНИТОР ///////////////////////*/}
 
         <SelectTopQuery onChange={handleChangeTopQuery} />
-        <TopQuery task={task} />
+        <TopQuery task={task} newRules={newRules}/>
 
         <div className="d-flex flex-row">
           {region && <SelectRegion onChange={handleSelectRegion} />}

@@ -7,7 +7,9 @@ const ruleSlice = createSlice({
     entities: null,
     isLoading: true,
     ruleLoading: false,
+    newRuleLoading: true,
     rule: null,
+    newRules: null,
     error: null,
   },
   reducers: {
@@ -19,6 +21,17 @@ const ruleSlice = createSlice({
       state.isLoading = false;
     },
     ruleRequestFailed: (state, action) => {
+      state.error = action.payload;
+      state.isLoading = false;
+    },
+    newRuleRequested: (state) => {
+      state.isLoading = true;
+    },
+    newRuleReceived: (state, action) => {
+      state.newRules = action.payload;
+      state.isLoading = false;
+    },
+    newRuleRequestFailed: (state, action) => {
       state.error = action.payload;
       state.isLoading = false;
     },
@@ -45,6 +58,9 @@ const {
   ruleRequested,
   ruleReceived,
   ruleRequestFailed,
+  newRuleRequested,
+  newRuleReceived,
+  newRuleRequestFailed,
   oneRuleRequested,
   oneRuleReceived,
   oneRuleRequetFailed,
@@ -53,11 +69,15 @@ const {
 
 export const loadRuleList = () => async (dispatch) => {
   dispatch(ruleRequested());
+  dispatch(newRuleRequested());
   try {
     const ruleData = await ruleService.getTotalRulesList(); // Получение с сервера данных по законам
+    const newRuleData = await ruleService.getNewRulesList();
     dispatch(ruleReceived(ruleData));
+    dispatch(newRuleReceived(newRuleData));
   } catch (error) {
     dispatch(ruleRequestFailed(error));
+    dispatch(newRuleRequestFailed(error))
   }
 };
 
@@ -83,7 +103,8 @@ export const userVoting =
     try {
       if (resultVote !== "Не голосовал") {
         await ruleService.setUserVote(resultVote, currentUser, ruleNumber);
-        if (resultVote === "За") {                // Все блоки if нужны для ДОБАВЛЕНИЯ  ...
+        if (resultVote === "За") {
+          // Все блоки if нужны для ДОБАВЛЕНИЯ  ...
           const ruleListClone = {
             ...ruleList,
             userVote: resultVote,
@@ -91,7 +112,8 @@ export const userVoting =
           };
           dispatch(setUserVote(ruleListClone));
         }
-        if (resultVote === "Против") {            // ... выбора пользователя ...
+        if (resultVote === "Против") {
+          // ... выбора пользователя ...
           const ruleListClone = {
             ...ruleList,
             userVote: resultVote,
@@ -99,7 +121,8 @@ export const userVoting =
           };
           dispatch(setUserVote(ruleListClone));
         }
-        if (resultVote === "Воздержался") {       // ... на диаграмму народного голосования
+        if (resultVote === "Воздержался") {
+          // ... на диаграмму народного голосования
           const ruleListClone = {
             ...ruleList,
             userVote: resultVote,
@@ -109,7 +132,8 @@ export const userVoting =
         }
       } else {
         await ruleService.discardUserVote(currentUser, ruleNumber);
-        if (ruleList.userVote === "За") {         // Эти блоки if нужны для отображения ИСКЛЮЧЕНИЯ ...
+        if (ruleList.userVote === "За") {
+          // Эти блоки if нужны для отображения ИСКЛЮЧЕНИЯ ...
           const ruleListClone = {
             ...ruleList,
             userVote: resultVote,
@@ -117,7 +141,8 @@ export const userVoting =
           };
           dispatch(setUserVote(ruleListClone));
         }
-        if (ruleList.userVote === "Против") {     // выбора пользователи из диаграмммы народного голосования
+        if (ruleList.userVote === "Против") {
+          // выбора пользователи из диаграмммы народного голосования
           const ruleListClone = {
             ...ruleList,
             userVote: resultVote,
@@ -125,7 +150,8 @@ export const userVoting =
           };
           dispatch(setUserVote(ruleListClone));
         }
-        if (ruleList.userVote === "Воздержался") { // ... 
+        if (ruleList.userVote === "Воздержался") {
+          // ...
           const ruleListClone = {
             ...ruleList,
             userVote: resultVote,
@@ -139,15 +165,16 @@ export const userVoting =
     }
   };
 
-  export const createSuggestion=(suggestion)=> async(dispatch)=>{
-    try{
-      const suggContent = await ruleService.addSuggestion(suggestion)
-    } catch (error){
-      console.log(error)
-    }
+export const createSuggestion = (suggestion) => async (dispatch) => {
+  try {
+    const suggContent = await ruleService.addSuggestion(suggestion);
+  } catch (error) {
+    console.log(error);
   }
+};
 
 export const getRule = () => (state) => state.rules.entities;
 export const getOneRule = () => (state) => state.rules.rule;
+export const getNewRules = () => (state) => state.rules.newRules;
 
 export default ruleReducer;

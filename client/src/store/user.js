@@ -137,7 +137,6 @@ export const getUserName = () => (state) => {
 export const getAuthErrors = () => (state) => state.user.error;
 export const getUserFromStore = () => (state) => {
   if (state.user.auth) {
-    console.log(state.user);
     return state.user.auth.userId;
   } else {
     return "anomous";
