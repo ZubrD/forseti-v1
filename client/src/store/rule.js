@@ -8,8 +8,16 @@ const ruleSlice = createSlice({
     isLoading: true,
     ruleLoading: false,
     newRuleLoading: true,
+    newVotedLoading: true,
+    mostVisitsLoading: true,
+    mostPreferLoading: true,
+    mostNotPreferLoading: true,
     rule: null,
     newRules: null,
+    newVoted: null,
+    mostVisits: null,
+    mostPrefer: null,
+    mostNotPrefer: null,
     error: null,
   },
   reducers: {
@@ -25,15 +33,59 @@ const ruleSlice = createSlice({
       state.isLoading = false;
     },
     newRuleRequested: (state) => {
-      state.isLoading = true;
+      state.newRuleLoading = true;
     },
     newRuleReceived: (state, action) => {
       state.newRules = action.payload;
-      state.isLoading = false;
+      state.newRuleLoading = false;
     },
     newRuleRequestFailed: (state, action) => {
       state.error = action.payload;
-      state.isLoading = false;
+      state.newRuleLoading = false;
+    },
+    newVotedRequested: (state) => {
+      state.newVotedLoading = true;
+    },
+    newVotedReceived: (state, action) => {
+      state.newVoted = action.payload;
+      state.newVotedLoading = false;
+    },
+    newVotedRequestFailed: (state, action) => {
+      state.error = action.payload;
+      state.newVotedLoading = false;
+    },
+    mostVisitsRequested: (state) => {
+      state.mostVisitsLoading = true;
+    },
+    mostVisitsReceived: (state, action) => {
+      state.mostVisits = action.payload;
+      state.mostVisitsLoading = false;
+    },
+    mostVisitsRequestFailed: (state, action) => {
+      state.error = action.payload;
+      state.mostVisitsLoading = false;
+    },
+    mostPreferRequested: (state) => {
+      state.mostPreferLoading = true;
+    },
+    mostPreferReceived: (state, action) => {
+      state.mostPrefer = action.payload;
+      state.mostPreferLoading = false;
+    },
+    mostPreferRequestFailed: (state, action) => {
+      state.error = action.payload;
+      state.mostPreferLoading = false;
+    },
+    mostNotPreferRequested: (state) => {
+      state.mostNotPreferLoading = true;
+    },
+    mostNotPreferReceived: (state, action) => {
+      state.mostNotPrefer = action.payload;
+      state.mostNotPreferLoading = false;
+    },
+    mostNotPreferRequestFailed: (state, action) => {
+      state.error = action.payload;
+      state.mostNotPreferLoading = false;
     },
     oneRuleRequested: (state) => {
       state.ruleLoading = true;
@@ -61,6 +113,18 @@ const {
   newRuleRequested,
   newRuleReceived,
   newRuleRequestFailed,
+  newVotedRequested,
+  newVotedReceived,
+  newVotedRequestFailed,
+  mostVisitsRequested,
+  mostVisitsReceived,
+  mostVisitsRequestFailed,
+  mostPreferRequested,
+  mostPreferReceived,
+  mostPreferRequestFailed,
+  mostNotPreferRequested,
+  mostNotPreferReceived,
+  mostNotPreferRequestFailed,
   oneRuleRequested,
   oneRuleReceived,
   oneRuleRequetFailed,
@@ -70,14 +134,30 @@ const {
 export const loadRuleList = () => async (dispatch) => {
   dispatch(ruleRequested());
   dispatch(newRuleRequested());
+  dispatch(newVotedRequested());
+  dispatch(mostVisitsRequested());
+  dispatch(mostPreferRequested());
+  dispatch(mostNotPreferRequested());
   try {
     const ruleData = await ruleService.getTotalRulesList(); // Получение с сервера данных по законам
     const newRuleData = await ruleService.getNewRulesList();
+    const newVotedData = await ruleService.getNewVotedList();
+    const mostVisitsData = await ruleService.getMostVisitsList();
+    const mostPrefer = await ruleService.getMostPreferList();
+    const mostNotPrefer = await ruleService.getMostNotPreferList();
     dispatch(ruleReceived(ruleData));
     dispatch(newRuleReceived(newRuleData));
+    dispatch(newVotedReceived(newVotedData));
+    dispatch(mostVisitsReceived(mostVisitsData));
+    dispatch(mostPreferReceived(mostPrefer));
+    dispatch(mostNotPreferReceived(mostNotPrefer));
   } catch (error) {
     dispatch(ruleRequestFailed(error));
-    dispatch(newRuleRequestFailed(error))
+    dispatch(newRuleRequestFailed(error));
+    dispatch(newVotedRequestFailed(error));
+    dispatch(mostVisitsRequestFailed(error));
+    dispatch(mostPreferRequestFailed(error));
+    dispatch(mostNotPreferRequestFailed(error));
   }
 };
 
@@ -176,5 +256,9 @@ export const createSuggestion = (suggestion) => async (dispatch) => {
 export const getRule = () => (state) => state.rules.entities;
 export const getOneRule = () => (state) => state.rules.rule;
 export const getNewRules = () => (state) => state.rules.newRules;
+export const getNewVoted = () => (state) => state.rules.newVoted;
+export const getMostVisits = () => (state) => state.rules.mostVisits;
+export const getMostPrefer = () => (state) => state.rules.mostPrefer;
+export const getMostNotPrefer = () => (state) => state.rules.mostNotPrefer;
 
 export default ruleReducer;

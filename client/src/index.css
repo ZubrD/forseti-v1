@@ -34,6 +34,10 @@
     width: 220px;
 }
 
+.most-visits-td {
+    text-align: center;
+}
+
 .card-title {
     text-align: center;
 }

@@ -26,19 +26,59 @@ router.get("/rules-total-list", async (request, response) => {
 });
 
 router.get("/new-rules", async (request, response) => {
-  const selectLastDate =        // Определяю последнюю дату
+  const selectLastDate = // Определяю последнюю дату
     "SELECT initialization_date FROM public.forseti_rules ORDER BY initialization_date DESC LIMIT 1";
 
   const dateArr = await pgQuery.query(selectLastDate);
   const date = dateArr[0].initialization_date;
 
-  date.setDate(date.getDate() - 7);   // Отсчитываю 7 дней от последней даты
+  date.setDate(date.getDate() - 7); // Отсчитываю 7 дней от последней даты
   const stringDate = modifyDate(date);
 
-  const selectRules =   // Выбираю законы, поступившие на рассмотрение за последнюю неделю
+  const selectRules = // Выбираю законы, поступившие на рассмотрение за последнюю неделю
     "SELECT title, rule_number, initialization_date FROM public.forseti_rules WHERE initialization_date>=$1 ORDER BY initialization_date DESC";
   const selectRulesVal = [stringDate];
   const rulesList = await pgQuery.query(selectRules, selectRulesVal);
+  response.status(200).send(rulesList);
+});
+
+router.get("/new-voted", async (request, response) => {
+  const selectLastDate =
+    "SELECT voting_date FROM public.forseti_rules WHERE voted='true' ORDER BY voting_date  DESC LIMIT 1";
+
+  const dateArr = await pgQuery.query(selectLastDate);
+  const date = dateArr[0].voting_date;
+
+  date.setDate(date.getDate() - 7); // Отсчитываю 7 дней от последней даты
+  const stringDate = modifyDate(date);
+
+  const selectRules =
+    "SELECT title, rule_number, voting_date FROM public.forseti_rules WHERE voting_date>=$1 AND voted='true' ORDER BY voting_date DESC";
+  const selectRulesVal = [stringDate];
+  const rulesList = await pgQuery.query(selectRules, selectRulesVal);
+  response.status(200).send(rulesList);
+});
+
+router.get("/most-visits", async (request, response) => {
+  const selectRules =
+    "SELECT title, rule_number, visits FROM public.forseti_rules ORDER BY visits DESC LIMIT 10";
+  const rulesList = await pgQuery.query(selectRules);
+  response.status(200).send(rulesList);
+});
+
+router.get("/most-prefer", async (request, response) => {
+  // Самые нужные законы
+  const selectRules =
+    "SELECT public.forseti_rules.title, public.forseti_rules.rule_number, COUNT(*) as count FROM public.forseti_rules, public.forseti_prefer WHERE public.forseti_rules.rule_number = public.forseti_prefer.rule GROUP BY public.forseti_rules.title, public.forseti_rules.rule_number";
+  const rulesList = await pgQuery.query(selectRules);
+  response.status(200).send(rulesList);
+});
+
+router.get("/most-notprefer", async (request, response) => {
+  // Самые нужные законы
+  const selectRules =
+    "SELECT public.forseti_rules.title, public.forseti_rules.rule_number, COUNT(*) as count FROM public.forseti_rules, public.forseti_notprefer WHERE public.forseti_rules.rule_number = public.forseti_notprefer.rule GROUP BY public.forseti_rules.title, public.forseti_rules.rule_number";
+  const rulesList = await pgQuery.query(selectRules);
   response.status(200).send(rulesList);
 });
 

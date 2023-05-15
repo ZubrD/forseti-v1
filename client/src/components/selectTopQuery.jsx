@@ -5,7 +5,6 @@ const selectArray = [
   {title: "Поручения депутатам", id: "drop3-deputy-task"},
   {title: "Новые законопроекты", id: "drop1-new-rule"},
   {title: "Недавно проголосовали", id: "drop2-new-voted"},
-  {title: "Ответы депутатов", id: "drop4-deputy-answer"},
   {title: "Самые популярные законы", id: "drop5-popular"},
   {title: "Самые полезные законы", id: "drop6-useful"},
   {title: "Самые ненужные законы", id: "drop7-needless"},
