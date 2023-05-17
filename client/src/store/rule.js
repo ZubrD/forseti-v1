@@ -12,12 +12,14 @@ const ruleSlice = createSlice({
     mostVisitsLoading: true,
     mostPreferLoading: true,
     mostNotPreferLoading: true,
+    randomRuleLoading: true,
     rule: null,
     newRules: null,
     newVoted: null,
     mostVisits: null,
     mostPrefer: null,
     mostNotPrefer: null,
+    randomRule: null,
     error: null,
   },
   reducers: {
@@ -98,6 +100,17 @@ const ruleSlice = createSlice({
       state.ruleLoading = false;
       state.error = action.payload;
     },
+    randomRuleRequested: (state) => {
+      state.randomRuleLoading = true;
+    },
+    randomRuleReceived: (state, action) => {
+      state.randomRule = action.payload;
+      state.randomRuleLoading = false;
+    },
+    randomRuleRequestFailed: (state, action) => {
+      state.error = action.payload;
+      state.randomRuleLoading = false;
+    },
     setUserVote: (state, action) => {
       state.rule = action.payload;
     },
@@ -128,6 +141,9 @@ const {
   oneRuleRequested,
   oneRuleReceived,
   oneRuleRequetFailed,
+  randomRuleRequested,
+  randomRuleReceived,
+  randomRuleRequestFailed,
   setUserVote,
 } = actions;
 
@@ -138,6 +154,7 @@ export const loadRuleList = () => async (dispatch) => {
   dispatch(mostVisitsRequested());
   dispatch(mostPreferRequested());
   dispatch(mostNotPreferRequested());
+  dispatch(randomRuleRequested());
   try {
     const ruleData = await ruleService.getTotalRulesList(); // Получение с сервера данных по законам
     const newRuleData = await ruleService.getNewRulesList();
@@ -145,12 +162,14 @@ export const loadRuleList = () => async (dispatch) => {
     const mostVisitsData = await ruleService.getMostVisitsList();
     const mostPrefer = await ruleService.getMostPreferList();
     const mostNotPrefer = await ruleService.getMostNotPreferList();
+    const randomRule = await ruleService.getRandomRule();
     dispatch(ruleReceived(ruleData));
     dispatch(newRuleReceived(newRuleData));
     dispatch(newVotedReceived(newVotedData));
     dispatch(mostVisitsReceived(mostVisitsData));
     dispatch(mostPreferReceived(mostPrefer));
     dispatch(mostNotPreferReceived(mostNotPrefer));
+    dispatch(randomRuleReceived(randomRule));
   } catch (error) {
     dispatch(ruleRequestFailed(error));
     dispatch(newRuleRequestFailed(error));
@@ -158,6 +177,7 @@ export const loadRuleList = () => async (dispatch) => {
     dispatch(mostVisitsRequestFailed(error));
     dispatch(mostPreferRequestFailed(error));
     dispatch(mostNotPreferRequestFailed(error));
+    dispatch(randomRuleRequestFailed(error));
   }
 };
 
@@ -260,5 +280,6 @@ export const getNewVoted = () => (state) => state.rules.newVoted;
 export const getMostVisits = () => (state) => state.rules.mostVisits;
 export const getMostPrefer = () => (state) => state.rules.mostPrefer;
 export const getMostNotPrefer = () => (state) => state.rules.mostNotPrefer;
+export const getRandomRule = () => (state) => state.rules.randomRule;
 
 export default ruleReducer;

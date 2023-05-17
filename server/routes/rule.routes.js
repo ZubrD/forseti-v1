@@ -25,6 +25,75 @@ router.get("/rules-total-list", async (request, response) => {
   response.status(200).send(rulesList);
 });
 
+router.get("/random-rule", async (request, response) => {
+  try {
+
+    const selectRule =
+      "SELECT id, title, rule_number, populated, voted, populi_voted, result_deputy_vote, result_populi_vote " +
+      "FROM public.forseti_rules WHERE voted='true' ORDER BY RANDOM() LIMIT 1";
+    const rule = await pgQuery.query(selectRule);
+
+    const ruleNumber = rule[0].rule_number;
+
+
+    /////////////////////////     ДИАГРАММА ГОЛОСОВАНИЯ ДЕПУТАТОВ ДЛЯ СЛУЧАЙНОГО ЗАКОНА     ////////////////////////
+    const selDeputyVote =
+      "SELECT COUNT (*) FROM public.forseti_finaltable WHERE rule_number_final=$1 AND vote_result=$2";
+    const selDeputyVoteYesVal = [ruleNumber, "За"];
+    const deputyVoteYes = await pgQuery.query(
+      selDeputyVote,
+      selDeputyVoteYesVal
+    );
+
+    const selDeputyVoteNoVal = [ruleNumber, "Против"];
+    const deputyVoteNo = await pgQuery.query(selDeputyVote, selDeputyVoteNoVal);
+
+    const selDeputyVoteAbstVal = [ruleNumber, "Воздержался"];
+    const deputyVoteAbst = await pgQuery.query(
+      selDeputyVote,
+      selDeputyVoteAbstVal
+    );
+
+    const selDeputyNotVoteVal = [ruleNumber, "Не голосовал"];
+    const deputyNotVote = await pgQuery.query(
+      selDeputyVote,
+      selDeputyNotVoteVal
+    );
+
+    ////////////////////////  ДИАГРАММА ГОЛОСОВАНИЯ НАРОДА ДЛЯ СЛУЧАЙНОГО ЗАКОНА  //////////////////////////
+    const selPopuliVote =
+      "SELECT COUNT (*) FROM public.forseti_voxpopuli WHERE rule_number=$1 AND result=$2";
+
+    const selPopuliVoteYesVal = [ruleNumber, "За"];
+    const populiVoteYes = await pgQuery.query(
+      selPopuliVote,
+      selPopuliVoteYesVal
+    );
+
+    const selPopuliVoteNoVal = [ruleNumber, "Против"];
+    const populiVoteNo = await pgQuery.query(selPopuliVote, selPopuliVoteNoVal);
+
+    const selPopuliVoteAbstVal = [ruleNumber, "Воздержался"];
+    const populiVoteAbst = await pgQuery.query(
+      selPopuliVote,
+      selPopuliVoteAbstVal
+    );
+
+    response.status(200).send({
+      rule: rule,
+      deputyVoteYes: deputyVoteYes[0].count,
+      deputyVoteNo: deputyVoteNo[0].count,
+      deputyVoteAbst: deputyVoteAbst[0].count,
+      deputyNotVote: deputyNotVote[0].count,
+      populiVoteYes: populiVoteYes[0].count,
+      populiVoteNo: populiVoteNo[0].count,
+      populiVoteAbst: populiVoteAbst[0].count,
+    });
+  } catch (error) {
+    response.send(error);
+  }
+});
+
 router.get("/new-rules", async (request, response) => {
   const selectLastDate = // Определяю последнюю дату
     "SELECT initialization_date FROM public.forseti_rules ORDER BY initialization_date DESC LIMIT 1";

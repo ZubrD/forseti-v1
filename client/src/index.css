@@ -48,6 +48,25 @@
     margin-bottom: 30px;
 }
 
+.col-title {
+    background-color: lightblue;
+    height: 60px;
+}
+
+.p-title {
+    text-align: center;
+    font-size: 30px;
+}
+
+.p-random-rule {
+    margin-top: 15px;
+    
+}
+
+.a-random-rule {
+    color: black;
+}
+
 
 /*****************************************************************************************************/
 /*                                          СТРАНИЦА ЗАКОНА                                          */

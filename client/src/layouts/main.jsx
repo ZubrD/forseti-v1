@@ -7,6 +7,7 @@ import {
   getMostVisits,
   getNewRules,
   getNewVoted,
+  getRandomRule,
   getRule,
   loadRuleList,
 } from "../store/rule";
@@ -19,6 +20,7 @@ import { useHistory } from "react-router-dom";
 import SelectTopQuery from "../components/selectTopQuery";
 import TopQuery from "../components/topQuery";
 import { getTask, loadTaskList } from "../store/task";
+import RandomRule from "../components/randomRule";
 
 const Main = () => {
   const history = useHistory();
@@ -35,6 +37,7 @@ const Main = () => {
   const mostVisits = useSelector(getMostVisits());
   const mostPrefer = useSelector(getMostPrefer());
   const mostNotPrefer = useSelector(getMostNotPrefer());
+  const randomRule = useSelector(getRandomRule());
   let hightlight = true; // Через useState не получается - бесконечный рендеринг
 
   const handleSelectRegion = ({ target }) => {
@@ -117,6 +120,12 @@ const Main = () => {
           mostPrefer={mostPrefer}
           mostNotPrefer={mostNotPrefer}
         />
+
+        {/*////////////////////////////////////// СЛУЧАЙНЫЙ ЗАКОН /////////////////////////////////////*/}
+
+        <RandomRule randomRule={randomRule} />
+
+        {/*////////////////////////////////////// ВЫБОР ДЕПУТАТА //////////////////////////////////////*/}
 
         <div className="d-flex flex-row">
           {region && <SelectRegion onChange={handleSelectRegion} />}

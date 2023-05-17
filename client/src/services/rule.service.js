@@ -20,18 +20,22 @@ const ruleService = {
   },
   getMostVisitsList: async () => {
     const { data } = await httpRule.get("most-visits/");
-    return data
+    return data;
   },
-  getMostPreferList: async ()=>{
-    const {data} = await httpRule.get("most-prefer/")
-    return data
+  getMostPreferList: async () => {
+    const { data } = await httpRule.get("most-prefer/");
+    return data;
   },
-  getMostNotPreferList: async ()=>{
-    const {data} = await httpRule.get("most-notprefer/")
-    return data
+  getMostNotPreferList: async () => {
+    const { data } = await httpRule.get("most-notprefer/");
+    return data;
   },
   getOneRule: async (num, user) => {
     const { data } = await httpRule.get(`/${num}/${user}`);
+    return data;
+  },
+  getRandomRule: async () => {
+    const { data } = await httpRule.get("random-rule/");
     return data;
   },
   getPrefer: async (num) => {
