@@ -1,9 +1,7 @@
 import React from "react";
-import DeputyPieChart from "./deputyPieChart";
 import RandomRuleCharts from "./randomRuleCharts";
 
-const RandomRule = ({ randomRule }) => {
-  console.log(randomRule);
+const RandomRule = ({ randomRule, coincidence }) => {
   let ruleNumber;
   let ruleTitle;
   let deputyVoteYes;
@@ -101,6 +99,15 @@ const RandomRule = ({ randomRule }) => {
         resultDeputyVote={resultDeputyVote}
         resultPopuliVote={resultPopuliVote}
       />
+      <div className="row">
+        <div className="col">
+          <p>
+            Мнение народа и депутатов совпадает в {coincidence.coincidencePr} %
+            случаев ({coincidence.coincidencePieces} из{" "}
+            {coincidence.totalPopuliVoting})
+          </p>
+        </div>
+      </div>
     </>
   );
 };

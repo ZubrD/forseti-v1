@@ -19,10 +19,10 @@ const SearchRule = ({ filteredRules, hightlight, onChange }) => {
         </div>
       </div>
       <div
-        className={"collapse row " + (filteredRules.length > 0 ? "show" : "")}
+        className={"collapse " + (filteredRules.length > 0 ? "show" : "")}
       >
-        <div className="col-6">
-          <div className="card card-body">
+        <div className="row position-relative" >
+          <div className="col-8 position-absolute top-0 end-0 search-rule-result">
             
             {filteredRules &&
               filteredRules.map((rule) => {

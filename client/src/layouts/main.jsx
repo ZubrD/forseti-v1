@@ -12,8 +12,6 @@ import {
   loadRuleList,
 } from "../store/rule";
 import { getRegion, loadRegion } from "../store/region";
-import SelectRegion from "../components/selectRegion";
-import SelectDeputy from "../components/selectDeputy";
 import SearchRule from "../components/searchRule";
 import NavBar from "../components/navBar";
 import { useHistory } from "react-router-dom";
@@ -21,6 +19,9 @@ import SelectTopQuery from "../components/selectTopQuery";
 import TopQuery from "../components/topQuery";
 import { getTask, loadTaskList } from "../store/task";
 import RandomRule from "../components/randomRule";
+import SelectDeputyBlock from "../components/selectDeputyBlock";
+import { getIsLoggedIn, getUserName } from "../store/user";
+import Footer from "../components/footer";
 
 const Main = () => {
   const history = useHistory();
@@ -38,6 +39,9 @@ const Main = () => {
   const mostPrefer = useSelector(getMostPrefer());
   const mostNotPrefer = useSelector(getMostNotPrefer());
   const randomRule = useSelector(getRandomRule());
+  const isLoggedIn = useSelector(getIsLoggedIn());
+  const currentUser = useSelector(getUserName());
+
   let hightlight = true; // Через useState не получается - бесконечный рендеринг
 
   const handleSelectRegion = ({ target }) => {
@@ -56,8 +60,7 @@ const Main = () => {
     const selectedDeputy = deputies.find(
       (item) => item.id === Number(target.value)
     );
-    console.log(selectedDeputy.name);
-    history.push(`../deputy/${selectedDeputy.name}`);
+    history.push(`../deputy/${selectedDeputy.name}`, (target = "_blank"));
   };
 
   const handleSearchRule = ({ target }) => {
@@ -82,9 +85,20 @@ const Main = () => {
     dispatch(loadTaskList());
   }, []);
 
+  let coincidencePieces; // Количество совпадений результатов голосования депутатов и народа
+  let totalPopuliVoting; // Законы, по которым народ проголосовал
+  let coincidencePr; // Процент совпадений
+  if (rule) {
+    coincidencePieces = Number(rule.coincidence.coincidencePieces[0].count);
+    totalPopuliVoting = Number(rule.coincidence.totalPopuliVoting[0].count);
+    coincidencePr = Math.round((coincidencePieces / totalPopuliVoting) * 100);
+  }
+  const coincidence = { coincidencePieces, totalPopuliVoting, coincidencePr };
+
   const filteredRules =
     searchRule.length > 4 // Минимальное количество символов в запросе
-      ? rule.filter(
+      ? rule.rulesList.filter(
+          // В rule не только список законов, но и количество совпадений результатов голосования
           (rule) =>
             rule.title.toLowerCase().indexOf(searchRule.toLowerCase()) !== -1
         )
@@ -123,20 +137,18 @@ const Main = () => {
 
         {/*////////////////////////////////////// СЛУЧАЙНЫЙ ЗАКОН /////////////////////////////////////*/}
 
-        <RandomRule randomRule={randomRule} />
+        <RandomRule randomRule={randomRule} coincidence={coincidence} />
 
         {/*////////////////////////////////////// ВЫБОР ДЕПУТАТА //////////////////////////////////////*/}
 
-        <div className="d-flex flex-row">
-          {region && <SelectRegion onChange={handleSelectRegion} />}
-          {region && (
-            <SelectDeputy
-              deputiesList={regionDeputiesList}
-              disabledStatus={deputyDisabled}
-              onChange={handleSelectDeputy}
-            />
-          )}
-        </div>
+        <SelectDeputyBlock
+          handleSelectRegion={handleSelectRegion}
+          deputyDisabled={deputyDisabled}
+          region={region}
+          regionDeputiesList={regionDeputiesList}
+          handleSelectDeputy={handleSelectDeputy}
+        />
+        <Footer isLoggedIn={isLoggedIn} currentUser={currentUser} />
       </div>
     </>
   );

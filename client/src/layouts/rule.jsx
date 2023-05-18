@@ -66,7 +66,7 @@ const Rule = ({ match }) => {
   });
 
   useEffect(() => {
-    dispatch(loadDeputyList())
+    dispatch(loadDeputyList());
     dispatch(loadOneRule(ruleNumber, userId));
     dispatch(loadCommentsList(ruleNumber, userId));
   }, []);
@@ -476,9 +476,9 @@ const Rule = ({ match }) => {
               </>
             )}
           </>
+          <Footer isLoggedIn={isLoggedIn} currentUser={currentUser} />
         </div>
       )}
-      <Footer isLoggedIn={isLoggedIn} currentUser={currentUser} />
     </>
   );
 };

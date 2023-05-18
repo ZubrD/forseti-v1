@@ -24,7 +24,7 @@ const Footer = ({ currentUser, isLoggedIn }) => {
   };
 
   return (
-    <div className="container">
+    <div>
       {isLoggedIn && (
         <div className="row" id="footer">
           <div className="col">

@@ -22,7 +22,14 @@ router.get("/rules-total-list", async (request, response) => {
   const selectRules =
     "SELECT title, rule_number FROM public.forseti_rules ORDER BY id ASC";
   const rulesList = await pgQuery.query(selectRules);
-  response.status(200).send(rulesList);
+  const selectConcurr = "SELECT COUNT (*) From public.forseti_rules WHERE populi_voted='true' AND result_deputy_vote=result_populi_vote"
+  const selectTotalPopuliVoting = "SELECT COUNT (*) From public.forseti_rules WHERE populi_voted='true'"
+  const coincidencePieces = await pgQuery.query(selectConcurr)
+  const totalPopuliVoting = await pgQuery.query(selectTotalPopuliVoting)
+  const coincidence = {coincidencePieces, totalPopuliVoting}
+
+  console.log(coincidencePieces)
+  response.status(200).send({rulesList, coincidence});
 });
 
 router.get("/random-rule", async (request, response) => {
