@@ -29,6 +29,7 @@ const Main = () => {
   const [regionDeputiesList, setRegionDeputiesList] = useState();
   const [deputyDisabled, setDeputyDisabled] = useState(true);
   const [searchRule, setSearchRule] = useState("");
+  const [searchDeputy, setSearchDeputy] = useState("");
   const rule = useSelector(getRule());
   const deputies = useSelector(getDeputy());
   const region = useSelector(getRegion());
@@ -67,6 +68,10 @@ const Main = () => {
     setSearchRule(target.value);
   };
 
+  const handleSearchDeputy = ({ target }) => {
+    setSearchDeputy(target.value);
+  };
+
   const handleChangeTopQuery = ({ target }) => {
     const elementsToHide = document.querySelector(".top-query-drops");
     for (let i = 0; i < elementsToHide.childNodes.length; i++) {
@@ -83,7 +88,15 @@ const Main = () => {
     dispatch(loadRuleList());
     dispatch(loadRegion());
     dispatch(loadTaskList());
+    document.body.addEventListener("click", clearInput);
   }, []);
+
+  const clearInput = () => {
+    document.querySelector(".input-search-deputy").value = "";
+    document.querySelector(".input-search-rule").value = "";
+    setSearchDeputy("");
+    setSearchRule("");
+  };
 
   let coincidencePieces; // Количество совпадений результатов голосования депутатов и народа
   let totalPopuliVoting; // Законы, по которым народ проголосовал
@@ -101,6 +114,15 @@ const Main = () => {
           // В rule не только список законов, но и количество совпадений результатов голосования
           (rule) =>
             rule.title.toLowerCase().indexOf(searchRule.toLowerCase()) !== -1
+        )
+      : [];
+
+  const filteredDeputy =
+    searchDeputy.length > 2 // Минимальное количество символов в запросе
+      ? deputies.filter(
+          // В rule не только список законов, но и количество совпадений результатов голосования
+          (rule) =>
+            rule.name.toLowerCase().indexOf(searchDeputy.toLowerCase()) !== -1
         )
       : [];
 
@@ -147,7 +169,11 @@ const Main = () => {
           region={region}
           regionDeputiesList={regionDeputiesList}
           handleSelectDeputy={handleSelectDeputy}
+          handleSearchDeputy={handleSearchDeputy}
+          hightlight={hightlight}
+          filteredDeputy={filteredDeputy}
         />
+        
         <Footer isLoggedIn={isLoggedIn} currentUser={currentUser} />
       </div>
     </>

@@ -17,6 +17,14 @@
     border: none;
 }
 
+.div-search-deputy {
+    border: none;
+}
+
+.no-border {
+    border: none;
+}
+
 .top-title {
     height: 80px;
     background-color: lightgrey;
@@ -75,6 +83,19 @@
     overflow-y: scroll;
     height: 300px;
     background-color: #e5dcdc;
+}
+
+.search-deputy-result {
+    z-index: 100;
+    overflow-y: scroll;
+    height: 150px;
+    background-color: #f0eaea;
+    margin-left: 13px;  
+}
+
+.test {
+    background-color: white;
+    border: none;
 }
 
 

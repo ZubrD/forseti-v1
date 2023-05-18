@@ -9,7 +9,7 @@ const SearchRule = ({ filteredRules, hightlight, onChange }) => {
         <div className="col-6 offset-6 div-search-rule">
           <input
             type="text"
-            className="form-control"
+            className="form-control input-search-rule"
             placeholder="Поиск закона начнётся после ввода 5 символов"
             aria-label="Username"
             aria-describedby="basic-addon1"
