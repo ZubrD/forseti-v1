@@ -28,7 +28,7 @@ const SearchRule = ({ filteredRules, hightlight, onChange }) => {
               filteredRules.map((rule) => {
                 hightlight = !hightlight; // Для чередования выделения цветом результатов поиска
                 return (
-                  <Link key={nanoid()} to={`rule/${rule.rule_number}`}>
+                  <Link key={nanoid()} to={`rule/${rule.rule_number}`} target="_blank">
                     <div
                       className={hightlight ? "hightlight-search-result" : ""}
                       role="button"

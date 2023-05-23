@@ -28,7 +28,6 @@ router.get("/rules-total-list", async (request, response) => {
   const totalPopuliVoting = await pgQuery.query(selectTotalPopuliVoting)
   const coincidence = {coincidencePieces, totalPopuliVoting}
 
-  console.log(coincidencePieces)
   response.status(200).send({rulesList, coincidence});
 });
 
