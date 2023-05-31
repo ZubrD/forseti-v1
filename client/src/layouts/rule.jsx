@@ -476,7 +476,7 @@ const Rule = ({ match }) => {
               </>
             )}
           </>
-          <Footer isLoggedIn={isLoggedIn} currentUser={currentUser} />
+          <Footer />
         </div>
       )}
     </>

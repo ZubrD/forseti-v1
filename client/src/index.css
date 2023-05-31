@@ -311,6 +311,17 @@ button {
 /*****************************************************************************************************/
 
 .accordion-body {       /* Дополняю встроенный класс компонента */
-    height: 300px;
+    height: 200px;
     overflow-y: scroll;
+}
+
+.task-img {
+    max-height: 2.5%;
+    max-width: 2.5%;
+    cursor: pointer;
+    opacity: 0.3;
+}
+
+.task-img-clicked {
+    opacity: 1;
 }

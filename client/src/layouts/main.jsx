@@ -174,7 +174,7 @@ const Main = () => {
           filteredDeputy={filteredDeputy}
         />
         
-        <Footer isLoggedIn={isLoggedIn} currentUser={currentUser} />
+        <Footer />
       </div>
     </>
   );

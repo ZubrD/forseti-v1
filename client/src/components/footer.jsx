@@ -1,22 +1,25 @@
 import React, { useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { createSuggestion } from "../store/rule";
+import { getIsLoggedIn, getUserName } from "../store/user";
 
-const Footer = ({ currentUser, isLoggedIn }) => {
+const Footer = () => {
   const dispatch = useDispatch();
   const [suggestion, setSuggestion] = useState();
+  const currentUser = useSelector(getUserName())
+  const isLoggedIn = useSelector(getIsLoggedIn())
 
   const handleChangeSuggestion = (event) => {
     const suggText = event.target.value;
-    const suggAuthor = event.target.attributes["author"].value;
     setSuggestion((prevState) => ({
       ...prevState,
       text: suggText,
-      name: suggAuthor ? suggAuthor : "anonim",
+      name: currentUser,
     }));
   };
 
   const handleSubmitSuggestion = (event) => {
+    console.log()
     event.preventDefault();
     const suggTextarea = document.getElementById("suggestion-textarea");
     dispatch(createSuggestion(suggestion));
@@ -35,7 +38,6 @@ const Footer = ({ currentUser, isLoggedIn }) => {
               <textarea
                 id="suggestion-textarea"
                 name="suggest"
-                author={currentUser}
                 onChange={handleChangeSuggestion}
               ></textarea>
               <br />
