@@ -19,6 +19,10 @@ const deputyService = {
   },
   postWithdrawLikeTask: async(likeData)=>{
     await httpDeputy.post('/withdrawLikeTask', likeData)
+  },
+  addTask: async(task)=>{
+    const {data} = await httpDeputy.post('/addTask', task)
+    return data   // возвращаю в deputy.js обновлённый список поручений
   }
 };
 

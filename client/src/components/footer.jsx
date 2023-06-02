@@ -19,7 +19,6 @@ const Footer = () => {
   };
 
   const handleSubmitSuggestion = (event) => {
-    console.log()
     event.preventDefault();
     const suggTextarea = document.getElementById("suggestion-textarea");
     dispatch(createSuggestion(suggestion));

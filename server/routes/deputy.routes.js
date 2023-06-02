@@ -205,7 +205,7 @@ router.get("/:deputyName/:currentUser", async (request, response) => {
 
     // Поручения депутату
     const deputyTaskSelect =
-      "SELECT * FROM public.forseti_taskfordeputy WHERE deputy_name=$1";
+      "SELECT * FROM public.forseti_taskfordeputy WHERE deputy_name=$1 ORDER BY id ASC";
     const deputyTaskVal = [deputyName];
     const deputyTasksList = await pgQuery.query(
       deputyTaskSelect,
@@ -260,6 +260,35 @@ router.get("/:deputyName/:currentUser", async (request, response) => {
     const united = { ...deputy[0], ...mandat[0], matching, others };
     response.status(200).send(united);
   } catch (error) {}
+});
+
+router.post("/addTask", async (request, response) => {
+  const { text, name, deputyName } = request.body;
+  const newTaskRating = 0;
+  const newTaskDate =
+    String(new Date().getFullYear()) +
+    "-" +
+    String(new Date().getMonth() + 1) +
+    "-" +
+    String(new Date().getDate());
+  const newTaskInsert =
+    "INSERT INTO public.forseti_taskfordeputy (task_author, task_text, task_date, task_rating, deputy_name) VALUES ($1, $2, $3, $4, $5)";
+  const newTaskVal = [name, text, newTaskDate, newTaskRating, deputyName];
+  try {
+    await pgQuery.query(newTaskInsert, newTaskVal); // Добавляю новое поручение в БД
+    // Если поручение добавлено, запрашиваю все поручения для данного депутата...
+    const deputyTaskSelect =
+      "SELECT * FROM public.forseti_taskfordeputy WHERE deputy_name=$1 ORDER BY id ASC";
+    const deputyTaskVal = [deputyName];
+    const deputyTasksList = await pgQuery.query(
+      deputyTaskSelect,
+      deputyTaskVal
+    );
+    // ... и отправляю в deputy.service.js обновлённый список поручений обратно для добавления в store
+    response.status(200).send(deputyTasksList); 
+  } catch (error) {
+    console.log("Ошибка при записи поручения депутату в базу данных", error);
+  }
 });
 
 module.exports = router;

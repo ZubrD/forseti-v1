@@ -33,9 +33,9 @@ const deputySlice = createSlice({
       state.deputyLoading = false;
       state.error = action.payload;
     },
-    taskRatingUpdated: (state, action) => {
+    oneDeputyUpdated: (state, action) => {
       state.deputy = action.payload;
-    },    
+    },
   },
 });
 
@@ -47,7 +47,7 @@ const {
   oneDeputyRequested,
   oneDeputyReceived,
   oneDeputyRequestFailed,
-  taskRatingUpdated
+  oneDeputyUpdated,
 } = actions;
 
 export const loadDeputyList = () => async (dispatch) => {
@@ -73,7 +73,7 @@ export const loadOneDeputy = (deputyName, currentUser) => async (dispatch) => {
   }
 };
 
-export const increaseLikeTask = (likeData) => async (dispatch) => {
+export const increaseLikeTask = (likeData) => async () => {
   try {
     await deputyService.postLikeTask(likeData);
   } catch (error) {
@@ -81,7 +81,7 @@ export const increaseLikeTask = (likeData) => async (dispatch) => {
   }
 };
 
-export const decreaseLikeTask = (likeData) => async (dispatch) => {
+export const decreaseLikeTask = (likeData) => async () => {
   try {
     await deputyService.postWithdrawLikeTask(likeData);
   } catch (error) {
@@ -97,7 +97,11 @@ export const minusLikeForStore = (taskId) => async (dispatch, getState) => {
   const deputyTasksListUpdated = deputyTasksList.map((item) => {
     if (Number(item.id) === Number(taskId)) {
       const currentRating = item.task_rating;
-      return { ...item, task_rating: currentRating - 1, currentUserLiked: false };
+      return {
+        ...item,
+        task_rating: currentRating - 1,
+        currentUserLiked: false,
+      };
     } else return item;
   });
 
@@ -106,7 +110,7 @@ export const minusLikeForStore = (taskId) => async (dispatch, getState) => {
     ...deputy,
     others: { ...deputy.others, deputyTasksList: deputyTasksListUpdated },
   };
-  dispatch(taskRatingUpdated(newDeputy))
+  dispatch(oneDeputyUpdated(newDeputy));
 };
 
 export const plusLikeForStore = (taskId) => async (dispatch, getState) => {
@@ -117,7 +121,11 @@ export const plusLikeForStore = (taskId) => async (dispatch, getState) => {
   const deputyTasksListUpdated = deputyTasksList.map((item) => {
     if (Number(item.id) === Number(taskId)) {
       const currentRating = item.task_rating;
-      return { ...item, task_rating: currentRating + 1, currentUserLiked: true };
+      return {
+        ...item,
+        task_rating: currentRating + 1,
+        currentUserLiked: true,
+      };
     } else return item;
   });
 
@@ -126,7 +134,23 @@ export const plusLikeForStore = (taskId) => async (dispatch, getState) => {
     ...deputy,
     others: { ...deputy.others, deputyTasksList: deputyTasksListUpdated },
   };
-  dispatch(taskRatingUpdated(newDeputy))
+  dispatch(oneDeputyUpdated(newDeputy));
+};
+
+// Добавление нового поручения депутату
+export const createTask = (task) => async (dispatch, getState) => {
+  const deputy = getState().deputies.deputy;
+  try {
+    const newTasksList = await deputyService.addTask(task);
+    // После успешного добавления поручения, получаю с сервера обновлённый список поручений, формирую новый объект данных депутата ...
+    const newDeputy = {
+      ...deputy,
+      others: { ...deputy.others, deputyTasksList: newTasksList },
+    };
+    dispatch(oneDeputyUpdated(newDeputy)); // ... и добавляю их в store
+  } catch (error) {
+    console.log("Ошибка в deputy.js в createTask");
+  }
 };
 
 export const getDeputy = () => (state) => state.deputies.entities;

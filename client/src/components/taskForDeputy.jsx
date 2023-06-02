@@ -1,17 +1,35 @@
 import React, { useState } from "react";
 import { MDBAccordion, MDBAccordionItem } from "mdb-react-ui-kit";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { getIsLoggedIn, getUserName } from "../store/user";
-import { getOneDeputy } from "../store/deputy";
+import { createTask, getOneDeputy } from "../store/deputy";
 import { nanoid } from "nanoid";
 import { modifyDateWithoutTime } from "../utils/modifyDateWithoutTime";
 
 const TaskForDeputy = ({ onClick }) => {
+  const dispatch = useDispatch();
   const isLoggedIn = useSelector(getIsLoggedIn());
   const currentUser = useSelector(getUserName());
   const deputy = useSelector(getOneDeputy()); // Данные из магазина или склада, короче, из store )
   const deputyTasksList = deputy.others.deputyTasksList;
-  console.log(deputyTasksList);
+  const [newTask, setNewTask] = useState();
+
+  const handleTaskChange = (event) => {
+    const taskText = event.target.value;
+    setNewTask((prevState) => ({
+      ...prevState,
+      text: taskText,
+      name: currentUser,
+      deputyName: deputy.name
+    }));
+  };
+
+  const handleTaskSubmit = (event) => {
+    event.preventDefault();
+    dispatch(createTask(newTask));
+    const element = document.getElementById("task-textarea");
+    element.value = "";
+  };
 
   return (
     <>
@@ -22,6 +40,23 @@ const TaskForDeputy = ({ onClick }) => {
               <h4>Направить поручение от {currentUser}</h4>
             </div>
           </div>
+
+          <div className="row">
+            <div className="col">
+              <form onSubmit={handleTaskSubmit}>
+                <textarea
+                  id="task-textarea"
+                  name="task_text"
+                  onChange={handleTaskChange}
+                ></textarea>
+                <br />
+                <button type="submit" className="btn btn-success">
+                  Отправить поручение
+                </button>
+              </form>
+            </div>
+          </div>
+
           <div className="row">
             <MDBAccordion>
               <MDBAccordionItem
@@ -36,7 +71,10 @@ const TaskForDeputy = ({ onClick }) => {
                         от {modifyDateWithoutTime(task.task_date)}{" "}
                       </span>
                       <img
-                        className={"task-img " + (task.currentUserLiked ? " task-img-clicked" : "")}
+                        className={
+                          "task-img " +
+                          (task.currentUserLiked ? " task-img-clicked" : "")
+                        }
                         data-task-id={task.id}
                         src={require(`../media/image/like.png`)}
                         onClick={onClick}
