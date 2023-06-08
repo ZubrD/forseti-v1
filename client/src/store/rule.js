@@ -1,5 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import ruleService from "../services/rule.service";
+import { toast } from "react-toastify";
 
 const ruleSlice = createSlice({
   name: "rules",
@@ -100,6 +101,9 @@ const ruleSlice = createSlice({
       state.ruleLoading = false;
       state.error = action.payload;
     },
+    oneRuleUpdated: (state, action) => {
+      state.rule = action.payload;
+    },
     randomRuleRequested: (state) => {
       state.randomRuleLoading = true;
     },
@@ -141,6 +145,7 @@ const {
   oneRuleRequested,
   oneRuleReceived,
   oneRuleRequetFailed,
+  oneRuleUpdated,
   randomRuleRequested,
   randomRuleReceived,
   randomRuleRequestFailed,
@@ -268,6 +273,47 @@ export const userVoting =
 export const createSuggestion = (suggestion) => async (dispatch) => {
   try {
     const suggContent = await ruleService.addSuggestion(suggestion);
+  } catch (error) {
+    toast.error("Ошибка отправки предложения на сервер");
+    console.log(error);
+  }
+};
+
+export const updateRule = (ruleNewData) => async (dispatch) => {
+  console.log('ruleNeData ', ruleNewData)
+  try {
+    dispatch(oneRuleUpdated(ruleNewData));
+  } catch (error) {}
+};
+
+export const setNecessary = (ruleNumber, user) => async (dispatch) => {
+  
+  try {
+    await ruleService.setPrefer(ruleNumber, user); // голосование "Да" за нужность закона
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const unSetNecessary = (ruleNumber, user) => async (dispatch) => {
+  try {
+    await ruleService.unSetPrefer(ruleNumber, user); // голосование "Да" за нужность закона
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const setNotNecessary = (ruleNumber, user) => async (dispatch) => {
+  try {
+    await ruleService.setNotPrefer(ruleNumber, user); // голосование "Да" за нужность закона
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export const unSetNotNecessary = (ruleNumber, user) => async (dispatch) => {
+  try {
+    await ruleService.unSetNotPrefer(ruleNumber, user); // голосование "Да" за нужность закона
   } catch (error) {
     console.log(error);
   }

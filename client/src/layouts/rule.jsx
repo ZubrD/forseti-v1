@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { getOneRule, loadOneRule } from "../store/rule";
+import {
+  getOneRule,
+  loadOneRule,
+  setNecessary,
+  setNotNecessary,
+  unSetNecessary,
+  unSetNotNecessary,
+  updateRule,
+} from "../store/rule";
 import { getDeputy, loadDeputyList } from "../store/deputy";
 import { MDBAccordion, MDBAccordionItem } from "mdb-react-ui-kit";
 import { Link } from "react-router-dom";
 import { nanoid } from "nanoid";
 import NavBar from "../components/navBar";
 import { getIsLoggedIn, getUserFromStore } from "../store/user";
-import {
-  handleClickUnnecessary,
-  handleClickNecessary,
-} from "../utils/likesDislikes";
 import DeputyPieChart from "../components/deputyPieChart";
 import PopuliPieChart from "../components/populiPieChart";
 import PopuliVoteTable from "../components/populiVoteTable";
@@ -91,6 +95,76 @@ const Rule = ({ match }) => {
     commentTextarea.value = "";
   };
 
+  const handleClickNecessary = (event) => {
+    const like = event.target;
+    const dislike = document.querySelector("#set-dislikes");
+    const user = like.getAttribute("username");
+    const ruleNumber = like.getAttribute("rule-number");
+
+    if (like.classList.contains("button-not-liked")) {
+      dispatch(setNecessary(ruleNumber, user)); // голосование "Да" за нужность закона
+      const countPrefer = Number(ruleAndUserFromStore.countPrefer) + 1;
+      const ruleUpdated = {
+        ...ruleAndUserFromStore,
+        countPrefer: countPrefer,
+        prefer: true,
+      }; // Обновлённый объект закона
+      dispatch(updateRule(ruleUpdated)); // Обновление в store данных о необходимости закона
+      like.classList.remove("button-not-liked");
+      like.classList.add("button-liked");
+      like.setAttribute("liked", "liked");
+      dislike.setAttribute("disabled", "disabled");
+    } else if (like.classList.contains("button-liked")) {
+      dispatch(unSetNecessary(ruleNumber, user)); // отмена голосования "Да" за нужность закона
+      const countPrefer = Number(ruleAndUserFromStore.countPrefer) - 1;
+      const ruleUpdated = {
+        ...ruleAndUserFromStore,
+        countPrefer: countPrefer,
+        prefer: false,
+      };// если не указываю prefer, не обновляется статус нажатия в store
+      dispatch(updateRule(ruleUpdated)); // Обновление в store данных о необходимости закона
+      like.classList.remove("button-liked");
+      like.classList.add("button-not-liked");
+      like.setAttribute("liked", "not-liked");
+      dislike.removeAttribute("disabled");
+    }
+  };
+
+  const handleClickUnnecessary = (event) => {
+    const dislike = event.target;
+    const like = document.querySelector("#set-likes");
+    const user = like.getAttribute("username");
+    const ruleNumber = like.getAttribute("rule-number");
+
+    if (dislike.classList.contains("button-not-disliked")) {
+      dispatch(setNotNecessary(ruleNumber, user)); // голосование "Нет" за нужность закона
+      const countNotPrefer = Number(ruleAndUserFromStore.countNotPrefer) + 1;
+      const ruleUpdated = {
+        ...ruleAndUserFromStore,
+        countNotPrefer: countNotPrefer,
+        notPrefer: true
+      }; // Обновлённый объект закона
+      dispatch(updateRule(ruleUpdated)); // Обновление в store данных о необходимости закона
+      dislike.classList.remove("button-not-disliked");
+      dislike.classList.add("button-disliked");
+      dislike.setAttribute("disliked", "disliked");
+      like.setAttribute("disabled", "disabled");
+    } else if (dislike.classList.contains("button-disliked")) {
+      dispatch(unSetNotNecessary(ruleNumber, user)); // голосование "Нет" за нужность закона
+      const countNotPrefer = Number(ruleAndUserFromStore.countNotPrefer) - 1;
+      const ruleUpdated = {
+        ...ruleAndUserFromStore,
+        countNotPrefer: countNotPrefer,
+        notPrefer: false
+      }; // Обновлённый объект закона
+      dispatch(updateRule(ruleUpdated)); // Обновление в store данных о необходимости закона
+      dislike.classList.remove("button-disliked");
+      dislike.classList.add("button-not-disliked");
+      dislike.setAttribute("disliked", "not-disliked");
+      like.removeAttribute("disabled");
+    }
+  };
+
   const isLoggedIn = useSelector(getIsLoggedIn());
 
   let ruleAuthorArray;
@@ -101,12 +175,8 @@ const Rule = ({ match }) => {
   let initialisationDateString;
   let workDuration;
   let currentUser;
-  let necessity;
-  let unNecessity;
   let countPrefer;
   let countNotPrefer;
-  let usefulness = 0;
-  let usefulnessColor = "";
   let populated;
   let resultDeputyVote;
   let resultPopuliVote;
@@ -135,12 +205,9 @@ const Rule = ({ match }) => {
     // console.log("Загрузка закона...");
   } else {
     // console.log("Загрузка закона завершена");
-    // console.log(ruleAndUserFromStore);
     findedRule = ruleAndUserFromStore.oneRule[0]; // Данные о законе
     ruleId = ruleAndUserFromStore.oneRule[0].id; // Данные о законопроекта
     currentUser = ruleAndUserFromStore.currUser; // Имя пользователя
-    necessity = ruleAndUserFromStore.prefer; // Нужность закона для этого пользователя
-    unNecessity = ruleAndUserFromStore.notPrefer;
     countPrefer = Number(ruleAndUserFromStore.countPrefer); // Количество лайков за закон (закон нужен)
     countNotPrefer = Number(ruleAndUserFromStore.countNotPrefer); // --- дизлайков (закон не нужен)
     populated = ruleAndUserFromStore.oneRule[0].populated; // После занесения в таблицу закона результатов голосования депутатами, отдельно запускается
@@ -201,28 +268,6 @@ const Rule = ({ match }) => {
       60 /
       60 /
       24;
-
-    const setLikes = document.querySelector("#set-likes"); // Если пользователь уже проголосовал за бесполезность закона,
-    const setDislikes = document.querySelector("#set-dislikes"); // кнопка 'Да' блокируется и наоборот. Разблокировать можно только отменив
-    if (setLikes) {
-      // предыдущий выбор
-      if (unNecessity) setLikes.setAttribute("disabled", "disabled");
-    }
-    if (setDislikes) {
-      if (necessity) setDislikes.setAttribute("disabled", "disabled");
-    }
-
-    if (countPrefer !== 0 || countNotPrefer !== 0) {
-      usefulness = Math.round(
-        (countPrefer / (countPrefer + countNotPrefer)) * 100
-      );
-      if (usefulness > 49) {
-        usefulnessColor = "green";
-      }
-      if (usefulness < 50) {
-        usefulnessColor = "red";
-      }
-    }
 
     if (resultDeputyVote === "Отклонён") {
       resultDeputyVoteColor = "gray";
@@ -334,24 +379,16 @@ const Rule = ({ match }) => {
           )}
           {/* //////////////////////// ВАМ ЭТОТ ЗАКОН НУЖЕН? /////////////////////////// */}
           <RuleNecessity
-            isLoggedIn={isLoggedIn}
-            necessity={necessity}
-            currentUser={currentUser}
             ruleNumber={ruleNumber}
             onClickNecessary={handleClickNecessary}
-            unNecessity={unNecessity}
             onClickUnnecessary={handleClickUnnecessary}
-            countPrefer={countPrefer}
-            countNotPrefer={countNotPrefer}
-            usefulness={usefulness}
-            usefulnessColor={usefulnessColor}
           />
           {/* //////////////////////////////////// ОТПРАВИТЬ КОММЕНТАРИЙ ////////////////////////////// */}
           {isLoggedIn && (
             <>
               <div className="row">
                 <div className="col">
-                  <h4>Ваш комментарий</h4>
+                  <h4>Ваш комментарий к закону</h4>
                 </div>
               </div>
               <div className="row">
@@ -380,7 +417,7 @@ const Rule = ({ match }) => {
           )}
           <>
             {/* //////////////////////////////////// АККОРДЕОН КОММЕНТАРИЕВ //////////////////////////////////////// */}
-            {modifiedComments && (
+            {Boolean(comments.length) && (
               <div className="row">
                 <MDBAccordion>
                   <MDBAccordionItem collapseId={1} headerTitle="Комментарии">

@@ -1,5 +1,6 @@
 import axios from "axios";
 import config from "../config.json";
+import { toast } from "react-toastify";
 
 const httpRule = axios.create({
   baseURL: config.apiEndpoint + "rule/", // "rule/" - это должно совпадать со ссылкой на роуты в index.js
@@ -67,8 +68,11 @@ const ruleService = {
     await httpRule.post("/discardUserVote", voteData);
   },
   addSuggestion: async (suggestionData) => {
-    // console.log(suggestionData)
-    await httpRule.post("/addSuggestion", suggestionData);
+    const resultPostSuggestion = await httpRule.post(
+      "/addSuggestion",
+      suggestionData
+    );
+    toast(resultPostSuggestion.data);
   },
 };
 

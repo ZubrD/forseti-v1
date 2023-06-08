@@ -7,17 +7,22 @@ import Login from "./layouts/login";
 import LogOut from "./layouts/logout";
 import Register from "./layouts/register";
 import Deputy from "./layouts/deputy";
+import { ToastContainer, toast } from "react-toastify";
+import 'react-toastify/dist/ReactToastify.css'
 
 function App() {
   return (
-    <Switch>
-      <Route path="/rule/:ruleNumber/" component={Rule} />
-      <Route path="/deputy/:deputyName" component={Deputy} />
-      <Route path="/login" component={Login} />
-      <Route path="/logout" component={LogOut} />
-      <Route path="/register" component={Register} />
-      <Route path="/" exact component={Main} />
-    </Switch>
+    <>
+      <Switch>
+        <Route path="/rule/:ruleNumber/" component={Rule} />
+        <Route path="/deputy/:deputyName" component={Deputy} />
+        <Route path="/login" component={Login} />
+        <Route path="/logout" component={LogOut} />
+        <Route path="/register" component={Register} />
+        <Route path="/" exact component={Main} />
+      </Switch>
+      <ToastContainer />
+    </>
   );
 }
 export default App;

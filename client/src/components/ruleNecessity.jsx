@@ -1,18 +1,38 @@
 import React from "react";
+import { useSelector } from "react-redux";
+import { getOneRule } from "../store/rule";
+import { getIsLoggedIn } from "../store/user";
 
 const RuleNecessity = ({
-  isLoggedIn,
-  necessity,
-  currentUser,
   ruleNumber,
   onClickNecessary,
-  unNecessity,
   onClickUnnecessary,
-  countPrefer,
-  countNotPrefer,
-  usefulness,
-  usefulnessColor,
 }) => {
+  const isLoggedIn = useSelector(getIsLoggedIn());
+  const oneRule = useSelector(getOneRule());
+  const currentUser = oneRule.currUser;
+  const countPrefer = Number(oneRule.countPrefer);
+  const countNotPrefer = Number(oneRule.countNotPrefer);
+  const necessity = oneRule.prefer;
+  const unNecessity = oneRule.notPrefer;
+
+  let usefulness;
+  if (countPrefer + countNotPrefer !== 0) {
+    usefulness = Math.round(
+      (countPrefer / (countPrefer + countNotPrefer)) * 100
+    );
+  } else {
+    usefulness = undefined;
+  }
+
+  let usefulnessColor;
+  if (usefulness > 49) {
+    usefulnessColor = "green";
+  }
+  if (usefulness < 50) {
+    usefulnessColor = "red";
+  }
+
   return (
     <>
       <div className="row">
@@ -30,6 +50,7 @@ const RuleNecessity = ({
               rule-number={ruleNumber}
               liked={necessity ? "liked" : "not-liked"}
               onClick={onClickNecessary}
+              disabled={unNecessity}
             >
               Да
             </button>
@@ -44,6 +65,7 @@ const RuleNecessity = ({
               rule-number={ruleNumber}
               disliked={unNecessity ? "disliked" : "not-disliked"}
               onClick={onClickUnnecessary}
+              disabled={necessity}
             >
               Нет
             </button>
@@ -69,7 +91,7 @@ const RuleNecessity = ({
           <p id="span-dislikes">{countNotPrefer}</p>
         </div>
       </div>
-      {usefulness && (
+      {usefulness !== undefined &&  (
         <div className="row">
           <div className="col">
             <p id="p-usefulness" style={{ color: usefulnessColor }}>
