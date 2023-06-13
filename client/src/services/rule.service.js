@@ -68,11 +68,15 @@ const ruleService = {
     await httpRule.post("/discardUserVote", voteData);
   },
   addSuggestion: async (suggestionData) => {
-    const resultPostSuggestion = await httpRule.post(
-      "/addSuggestion",
-      suggestionData
-    );
-    toast(resultPostSuggestion.data);
+    try {
+      const resultPostSuggestion = await httpRule.post(
+        "/addSuggestion",
+        suggestionData
+      );
+      toast(resultPostSuggestion.data);
+    } catch (error) {
+      toast.error("Произошла ошибка при отправке предложения на сервер");
+    }
   },
 };
 

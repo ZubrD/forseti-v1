@@ -1,5 +1,6 @@
 import axios from "axios";
 import config from "../config.json";
+import { toast } from "react-toastify";
 
 const httpDeputy = axios.create({
   baseURL: config.apiEndpoint + "deputy/",
@@ -22,6 +23,8 @@ const deputyService = {
   },
   addTask: async(task)=>{
     const {data} = await httpDeputy.post('/addTask', task)
+    console.log(data)
+    toast(`Ваше поручение для депутата (${data[0].deputy_name}) отправлено`)
     return data   // возвращаю в deputy.js обновлённый список поручений
   }
 };
