@@ -59,7 +59,7 @@
 >PostgreSQL
 
 ## Видеопрезентация
-
+https://www.youtube.com/watch?v=6Jh1-tQ5QGI
 
 ## Адрес сайта
 http://194.67.86.212
