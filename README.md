@@ -53,7 +53,7 @@
 >JavaScript
 
 ## Внешние библиотеки
->Node, Express, Axios,  Redux, Bootstrap
+>React, Node, Express, Axios, Redux, Bootstrap
 
 ## База данных
 >PostgreSQL
